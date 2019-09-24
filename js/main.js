@@ -83,11 +83,11 @@ var getRandomPhotos = function () {
 
 var getPin = function (ad) {
   var pin = similarPinTemplate.cloneNode(true);
-  console.log(pin.querySelector('img').style.width);
-  pin.style.left = (ad.location.x - (Math.floor(pin.querySelector('img').width / 2)) + 'px');
-  pin.style.top = ((ad.location.y - pin.querySelector('img').height) + 'px');
-  pin.querySelector('img').src = ad.author.avatar;
-  pin.querySelector('img').alt = ad.offer.title;
+  var pinImg = pin.querySelector('img');
+  pin.style.left = (ad.location.x - (Math.floor(pinImg.width / 2)) + 'px');
+  pin.style.top = ((ad.location.y - pinImg.height) + 'px');
+  pinImg.src = ad.author.avatar;
+  pinImg.alt = ad.offer.title;
   return pin;
 };
 
