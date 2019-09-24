@@ -72,30 +72,28 @@ var getRandomPhotos = function () {
   return allPhotos;
 };
 
-var getPin = function (ad) {
+var makePin = function (ad) {
   var pin = similarPinTemplate.cloneNode(true);
-  var pinImg = pin.querySelector('img');
-  pin.style.left = ad.location.x - (Math.floor(pinImg.width / 2)) + 'px';
-  pin.style.top = (ad.location.y - pinImg.height) + 'px';
-  pinImg.src = ad.author.avatar;
-  pinImg.alt = ad.offer.title;
+  var pinImage = pin.querySelector('img');
+  pin.style.left = ad.location.x - (Math.floor(pinImage.width / 2)) + 'px';
+  pin.style.top = (ad.location.y - pinImage.height) + 'px';
+  pinImage.src = ad.author.avatar;
+  pinImage.alt = ad.offer.title;
   return pin;
 };
 
-var getPins = function (myAds) {
-  var pins = [];
+var makePinsFragment = function (myAds) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < myAds.length; i++) {
-    pins[i] = getPin(myAds[i]);
-    fragment.appendChild(pins[i]);
+    fragment.appendChild(makePin(myAds[i]));
   }
   return fragment;
 };
 
-var generateAd = function (addNumber) {
+var generateAd = function (adNumber) {
   var ad = {
     author: {
-      avatar: 'img/avatars/user0' + addNumber + '.png'
+      avatar: 'img/avatars/user0' + adNumber + '.png'
     },
     offer: {
       title: getRandomTitle(),
@@ -118,21 +116,21 @@ var generateAd = function (addNumber) {
   return ad;
 };
 
-var generateAds = function (myAds) {
-  for (var i = 1; i <= ADS_COUNT; i++) {
-    myAds.push(generateAd(i));
+var generateAds = function (adsCount) {
+  var ads = [];
+  for (var i = 1; i <= adsCount; i++) {
+    ads.push(generateAd(i));
   }
-  return myAds;
+  return ads;
 };
 
 var initMap = function () {
   var map = document.querySelector('.map');
   map.classList.remove('map--faded');
   var similarListElement = document.querySelector('.map__pins');
-  similarListElement.appendChild(getPins(myAds));
+  similarListElement.appendChild(makePinsFragment(myAds));
 };
 
-var myAds = [];
-generateAds(myAds);
+var myAds = generateAds(ADS_COUNT);
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 initMap();
