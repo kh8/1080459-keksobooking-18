@@ -8,7 +8,6 @@ var ADS = {
   MAX_PRICE: 100000,
   MAX_ROOMS: 3,
   MAX_GUESTS: 2,
-  TYPE_COUNT: 4,
   TYPES: ['palace', 'flat', 'house', 'bungalo'],
   CHECKINS: ['12:00', '13:00', '14:00'],
   CHECKOUTS: ['12:00', '13:00', '14:00'],
@@ -45,16 +44,8 @@ var getRandomAddress = function () {
   return getCeilRandom(ADS.MAX_X) + ' ' + getCeilRandom(ADS.MAX_X);
 };
 
-var getRandomType = function () {
-  return ADS.TYPES[getCeilRandom(ADS.TYPE_COUNT)];
-};
-
-var getRandomCheckin = function () {
-  return ADS.CHECKINS[getCeilRandom(ADS.CHECKINS.length)];
-};
-
-var getRandomCheckOut = function () {
-  return ADS.CHECKOUTS[getCeilRandom(ADS.CHECKOUTS.length)];
+var getRandomElementFromArray = function (array) {
+  return array[getCeilRandom(array.length)];
 };
 
 var getRandomFeatures = function () {
@@ -84,8 +75,8 @@ var getRandomPhotos = function () {
 var getPin = function (ad) {
   var pin = similarPinTemplate.cloneNode(true);
   var pinImg = pin.querySelector('img');
-  pin.style.left = (ad.location.x - (Math.floor(pinImg.width / 2)) + 'px');
-  pin.style.top = ((ad.location.y - pinImg.height) + 'px');
+  pin.style.left = ad.location.x - (Math.floor(pinImg.width / 2)) + 'px';
+  pin.style.top = (ad.location.y - pinImg.height) + 'px';
   pinImg.src = ad.author.avatar;
   pinImg.alt = ad.offer.title;
   return pin;
@@ -110,11 +101,11 @@ var generateAd = function (addNumber) {
       title: getRandomTitle(),
       address: getRandomAddress(),
       price: getCeilRandom(ADS.MAX_PRICE),
-      type: getRandomType(),
+      type: getRandomElementFromArray(ADS.TYPES),
       rooms: getCeilRandom(ADS.MAX_ROOMS),
       guests: getCeilRandom(ADS.MAX_GUESTS),
-      checkin: getRandomCheckin(),
-      checkout: getRandomCheckOut(),
+      checkin: getRandomElementFromArray(ADS.CHECKINS),
+      checkout: getRandomElementFromArray(ADS.CHECKOUTS),
       features: getRandomFeatures(),
       description: getRandomDescription(),
       photos: getRandomPhotos()
