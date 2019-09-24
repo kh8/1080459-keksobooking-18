@@ -2,12 +2,12 @@
 
 var ADS_COUNT = 8;
 var ADS = {
-  MAX_X: 800,
+  MAX_X: 1200,
   MIN_Y: 130,
   MAX_Y: 630,
-  MAX_PRICE: 10000,
-  MAX_ROOMS: 15,
-  MAX_GUESTS: 4,
+  MAX_PRICE: 100000,
+  MAX_ROOMS: 3,
+  MAX_GUESTS: 2,
   TYPE_COUNT: 4,
   TYPES: ['palace', 'flat', 'house', 'bungalo'],
   CHECKINS: ['12:00', '13:00', '14:00'],
@@ -83,8 +83,9 @@ var getRandomPhotos = function () {
 
 var getPin = function (ad) {
   var pin = similarPinTemplate.cloneNode(true);
-  pin.style.left = ad.location.x + 'px';
-  pin.style.top = ad.location.y + 'px';
+  console.log(pin.querySelector('img').style.width);
+  pin.style.left = (ad.location.x - (Math.floor(pin.querySelector('img').width / 2)) + 'px');
+  pin.style.top = ((ad.location.y - pin.querySelector('img').height) + 'px');
   pin.querySelector('img').src = ad.author.avatar;
   pin.querySelector('img').alt = ad.offer.title;
   return pin;
