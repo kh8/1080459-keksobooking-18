@@ -85,8 +85,8 @@ var getPin = function (ad) {
   var pin = similarPinTemplate.cloneNode(true);
   pin.style.left = ad.location.x + 'px';
   pin.style.top = ad.location.y + 'px';
-  pin.src = ad.author.avatar;
-  pin.alt = ad.offer.title;
+  pin.querySelector('img').src = ad.author.avatar;
+  pin.querySelector('img').alt = ad.offer.title;
   return pin;
 };
 
@@ -127,7 +127,7 @@ var generateAd = function (addNumber) {
 };
 
 var generateAds = function (myAds) {
-  for (var i = 0; i < ADS_COUNT; i++) {
+  for (var i = 1; i <= ADS_COUNT; i++) {
     myAds.push(generateAd(i));
   }
   return myAds;
