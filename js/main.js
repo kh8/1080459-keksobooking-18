@@ -1,7 +1,7 @@
 'use strict';
 
 var ADS_COUNT = 8;
-var ADS = {
+var ADS_SETTINGS = {
   MAX_X: 1200,
   MIN_Y: 130,
   MAX_Y: 630,
@@ -12,6 +12,8 @@ var ADS = {
   CHECKINS: ['12:00', '13:00', '14:00'],
   CHECKOUTS: ['12:00', '13:00', '14:00'],
   FEATURES: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
+  TITLES: ['Клевая хата', 'Лофт', 'Дом на набережной', 'Пентхаус', 'Мега-сарай', 'Уютное гнездышко', 'Дворец императора'],
+  DESCRIPTIONS: ['Отличный вид на соседний дом', 'Дешево и сердито', 'Здесь жил Харуки Мураками', '47й этаж', 'Евроремонт', '3 минуты до метро', 'Тихие соседи'],
   PHOTOS: [
     'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
@@ -36,36 +38,24 @@ var shuffleArray = function (array) {
   return array;
 };
 
-var getRandomTitle = function () {
-  return '';
-};
-
-var getRandomAddress = function () {
-  return getCeilRandom(ADS.MAX_X) + ' ' + getCeilRandom(ADS.MAX_X);
-};
-
 var getRandomElementFromArray = function (array) {
   return array[getCeilRandom(array.length)];
 };
 
-var getRandomFeatures = function () {
+var getRandomFeatures = function (features) {
   var allFeatures = '';
-  var shuffledFeatures = shuffleArray(ADS.FEATURES);
-  var featuresCount = getCeilRandom(ADS.FEATURES.length);
+  var shuffledFeatures = shuffleArray(features);
+  var featuresCount = getCeilRandom(features.length);
   for (var i = 0; i <= featuresCount; i++) {
     allFeatures += shuffledFeatures[i] + ' ';
   }
   return allFeatures;
 };
 
-var getRandomDescription = function () {
-  return '';
-};
-
-var getRandomPhotos = function () {
+var getRandomPhotos = function (photos) {
   var allPhotos = '';
-  var shuffledPhotos = shuffleArray(ADS.PHOTOS);
-  var photosCount = getCeilRandom(ADS.PHOTOS.length);
+  var shuffledPhotos = shuffleArray(photos);
+  var photosCount = getCeilRandom(photos.length);
   for (var i = 0; i <= photosCount; i++) {
     allPhotos += shuffledPhotos[i] + ' ';
   }
@@ -75,7 +65,7 @@ var getRandomPhotos = function () {
 var makePin = function (ad) {
   var pin = similarPinTemplate.cloneNode(true);
   var pinImage = pin.querySelector('img');
-  pin.style.left = ad.location.x - (Math.floor(pinImage.width / 2)) + 'px';
+  pin.style.left = (ad.location.x - (Math.floor(pinImage.width / 2))) + 'px';
   pin.style.top = (ad.location.y - pinImage.height) + 'px';
   pinImage.src = ad.author.avatar;
   pinImage.alt = ad.offer.title;
@@ -96,23 +86,24 @@ var generateAd = function (adNumber) {
       avatar: 'img/avatars/user0' + adNumber + '.png'
     },
     offer: {
-      title: getRandomTitle(),
-      address: getRandomAddress(),
-      price: getCeilRandom(ADS.MAX_PRICE),
-      type: getRandomElementFromArray(ADS.TYPES),
-      rooms: getCeilRandom(ADS.MAX_ROOMS),
-      guests: getCeilRandom(ADS.MAX_GUESTS),
-      checkin: getRandomElementFromArray(ADS.CHECKINS),
-      checkout: getRandomElementFromArray(ADS.CHECKOUTS),
-      features: getRandomFeatures(),
-      description: getRandomDescription(),
-      photos: getRandomPhotos()
+      title: getCeilRandom(ADS_SETTINGS.TITLES),
+      address: '',
+      price: getCeilRandom(ADS_SETTINGS.MAX_PRICE),
+      type: getRandomElementFromArray(ADS_SETTINGS.TYPES),
+      rooms: getCeilRandom(ADS_SETTINGS.MAX_ROOMS),
+      guests: getCeilRandom(ADS_SETTINGS.MAX_GUESTS),
+      checkin: getRandomElementFromArray(ADS_SETTINGS.CHECKINS),
+      checkout: getRandomElementFromArray(ADS_SETTINGS.CHECKOUTS),
+      features: getRandomFeatures(ADS_SETTINGS.FEATURES),
+      description: getCeilRandom(ADS_SETTINGS.DESCRIPTIONS),
+      photos: getRandomPhotos(ADS_SETTINGS.PHOTOS)
     },
     location: {
-      x: getCeilRandom(ADS.MAX_X),
-      y: getCeilRandomFromInterval(ADS.MIN_Y, ADS.MAX_Y)
+      x: getCeilRandom(ADS_SETTINGS.MAX_X),
+      y: getCeilRandomFromInterval(ADS_SETTINGS.MIN_Y, ADS_SETTINGS.MAX_Y)
     }
   };
+  ad.offer.address = ad.location.x + ' ' + ad.location.y;
   return ad;
 };
 
