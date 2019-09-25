@@ -2,6 +2,7 @@
 
 var ADS_COUNT = 8;
 var ADS_SETTINGS = {
+  MIN_X: 0,
   MAX_X: 1200,
   MIN_Y: 130,
   MAX_Y: 630,
@@ -53,20 +54,26 @@ var getRandomFeatures = function (features) {
 };
 
 var getRandomPhotos = function (photos) {
-  var allPhotos = '';
+  var allPhotos = [];
   var shuffledPhotos = shuffleArray(photos);
   var photosCount = getCeilRandom(photos.length);
   for (var i = 0; i <= photosCount; i++) {
-    allPhotos += shuffledPhotos[i] + ' ';
+    allPhotos.push(shuffledPhotos[i]);
   }
   return allPhotos;
 };
 
+var getLocationX = function (minx, maxx) {
+  return getCeilRandomFromInterval(minx, maxx) - pinImage.width / 2;
+};
+
+var getLocationY = function (miny, maxy) {
+  return getCeilRandomFromInterval(miny, maxy) - pinImage.height;
+};
+
 var makePin = function (ad) {
-  var pin = similarPinTemplate.cloneNode(true);
-  var pinImage = pin.querySelector('img');
-  pin.style.left = (ad.location.x - (Math.floor(pinImage.width / 2))) + 'px';
-  pin.style.top = (ad.location.y - pinImage.height) + 'px';
+  pin.style.left = ad.location.x + 'px';
+  pin.style.top = ad.location.y + 'px';
   pinImage.src = ad.author.avatar;
   pinImage.alt = ad.offer.title;
   return pin;
@@ -86,7 +93,7 @@ var generateAd = function (adNumber) {
       avatar: 'img/avatars/user0' + adNumber + '.png'
     },
     offer: {
-      title: getCeilRandom(ADS_SETTINGS.TITLES),
+      title: getRandomElementFromArray(ADS_SETTINGS.TITLES),
       address: '',
       price: getCeilRandom(ADS_SETTINGS.MAX_PRICE),
       type: getRandomElementFromArray(ADS_SETTINGS.TYPES),
@@ -95,12 +102,12 @@ var generateAd = function (adNumber) {
       checkin: getRandomElementFromArray(ADS_SETTINGS.CHECKINS),
       checkout: getRandomElementFromArray(ADS_SETTINGS.CHECKOUTS),
       features: getRandomFeatures(ADS_SETTINGS.FEATURES),
-      description: getCeilRandom(ADS_SETTINGS.DESCRIPTIONS),
+      description: getRandomElementFromArray(ADS_SETTINGS.DESCRIPTIONS),
       photos: getRandomPhotos(ADS_SETTINGS.PHOTOS)
     },
     location: {
-      x: getCeilRandom(ADS_SETTINGS.MAX_X),
-      y: getCeilRandomFromInterval(ADS_SETTINGS.MIN_Y, ADS_SETTINGS.MAX_Y)
+      x: getLocationX(ADS_SETTINGS.MIN_X, ADS_SETTINGS.MAX_X),
+      y: getLocationY(ADS_SETTINGS.MIN_Y, ADS_SETTINGS.MAX_Y)
     }
   };
   ad.offer.address = ad.location.x + ' ' + ad.location.y;
@@ -117,11 +124,13 @@ var generateAds = function (adsCount) {
 
 var initMap = function () {
   var map = document.querySelector('.map');
-  map.classList.remove('map--faded');
   var similarListElement = document.querySelector('.map__pins');
+  map.classList.remove('map--faded');
   similarListElement.appendChild(makePinsFragment(myAds));
 };
 
-var myAds = generateAds(ADS_COUNT);
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var pin = similarPinTemplate.cloneNode(true);
+var pinImage = pin.querySelector('img');
+var myAds = generateAds(ADS_COUNT);
 initMap();
