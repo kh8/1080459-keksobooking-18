@@ -68,12 +68,11 @@ var getRandomPhotos = function (photos) {
   return allPhotos;
 };
 
-var getLocationX = function (minx, maxx) {
-  return getCeilRandomFromInterval(minx, maxx) - pinImage.width / 2;
-};
-
-var getLocationY = function (miny, maxy) {
-  return getCeilRandomFromInterval(miny, maxy) - pinImage.height;
+var getLocation = function (minX, maxX, minY, maxY) {
+  var coord = {};
+  coord.x = getCeilRandomFromInterval(minX, maxX) - pinImage.width / 2;
+  coord.y = getCeilRandomFromInterval(minY, maxY) - pinImage.height;
+  return coord;
 };
 
 var makePin = function (ad) {
@@ -94,17 +93,18 @@ var makePinsFragment = function (myAds) {
 };
 
 var generateAd = function (adNumber) {
+  var adLocation = getLocation(ADS_SETTINGS.MIN_X, ADS_SETTINGS.MAX_X, ADS_SETTINGS.MIN_Y, ADS_SETTINGS.MAX_Y);
   var ad = {
     author: {
       avatar: 'img/avatars/user0' + adNumber + '.png'
     },
     offer: {
       title: getRandomElementFromArray(ADS_SETTINGS.TITLES),
-      address: '',
+      address: adLocation.x + ' ' + adLocation.y,
       price: getCeilRandom(ADS_SETTINGS.MAX_PRICE),
       type: getRandomElementFromArray(ADS_SETTINGS.TYPES),
       rooms: getCeilRandom(ADS_SETTINGS.MAX_ROOMS),
-      guests: getCeilRandom(ADS_SETTINGS.MAX_GUESTS),
+      guests: getCeilRandomFromInterval(0, ADS_SETTINGS.MAX_GUESTS),
       checkin: getRandomElementFromArray(ADS_SETTINGS.CHECKINS),
       checkout: getRandomElementFromArray(ADS_SETTINGS.CHECKOUTS),
       features: getRandomFeatures(ADS_SETTINGS.FEATURES),
@@ -112,11 +112,10 @@ var generateAd = function (adNumber) {
       photos: getRandomPhotos(ADS_SETTINGS.PHOTOS)
     },
     location: {
-      x: getLocationX(ADS_SETTINGS.MIN_X, ADS_SETTINGS.MAX_X),
-      y: getLocationY(ADS_SETTINGS.MIN_Y, ADS_SETTINGS.MAX_Y)
+      x: adLocation.x,
+      y: adLocation.y
     }
   };
-  ad.offer.address = ad.location.x + ' ' + ad.location.y;
   return ad;
 };
 
