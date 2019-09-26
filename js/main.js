@@ -127,10 +127,9 @@ var generateAds = function (adsCount) {
   return ads;
 };
 
-var initMap = function () {
+var initMap = function (ads) {
   map.classList.remove('map--faded');
-  similarListElement.appendChild(makePinsFragment(myAds));
+  similarListElement.appendChild(makePinsFragment(ads));
 };
-
 var myAds = generateAds(ADS_COUNT);
-initMap();
+initMap(myAds);
