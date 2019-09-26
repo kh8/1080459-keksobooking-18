@@ -21,26 +21,31 @@ var ADS_SETTINGS = {
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg']
 };
 
+var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var similarListElement = document.querySelector('.map__pins');
+var pinImage = document.querySelector('#pin').content.querySelector('img');
+var map = document.querySelector('.map');
+
 var getCeilRandom = function (max) {
-  return Math.floor(Math.random() * max);
+  return Math.floor(Math.random() * max) + 1;
 };
 
 var getCeilRandomFromInterval = function (min, max) {
-  return getCeilRandom(max - min) + min;
+  return Math.floor(Math.random() * (max - min)) + min;
+};
+
+var getRandomElementFromArray = function (array) {
+  return array[getCeilRandomFromInterval(0, array.length)];
 };
 
 var shuffleArray = function (array) {
   for (var i = array.length - 1; i > 0; i--) {
-    var j = getCeilRandom(i + 1);
+    var j = getCeilRandom(i);
     var temp = array[i];
     array[i] = array[j];
     array[j] = temp;
   }
   return array;
-};
-
-var getRandomElementFromArray = function (array) {
-  return array[getCeilRandom(array.length)];
 };
 
 var getRandomFeatures = function (features) {
@@ -72,6 +77,7 @@ var getLocationY = function (miny, maxy) {
 };
 
 var makePin = function (ad) {
+  var pin = similarPinTemplate.cloneNode(true);
   pin.style.left = ad.location.x + 'px';
   pin.style.top = ad.location.y + 'px';
   pinImage.src = ad.author.avatar;
@@ -123,14 +129,9 @@ var generateAds = function (adsCount) {
 };
 
 var initMap = function () {
-  var map = document.querySelector('.map');
-  var similarListElement = document.querySelector('.map__pins');
   map.classList.remove('map--faded');
   similarListElement.appendChild(makePinsFragment(myAds));
 };
 
-var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-var pin = similarPinTemplate.cloneNode(true);
-var pinImage = pin.querySelector('img');
 var myAds = generateAds(ADS_COUNT);
 initMap();
