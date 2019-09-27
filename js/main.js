@@ -156,6 +156,7 @@ var makeCard = function (ad) {
     photo.src = ad.offer.photos[i];
     card.querySelector('.popup__photos').appendChild(photo);
   }
+  card.querySelector('.popup__photo').remove();
   return card;
 };
 
