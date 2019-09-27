@@ -54,7 +54,7 @@ var getRandomFeatures = function (features) {
   var allFeatures = '';
   var shuffledFeatures = shuffleArray(features);
   var featuresCount = getCeilRandom(features.length);
-  for (var i = 0; i <= featuresCount; i++) {
+  for (var i = 0; i < featuresCount; i++) {
     allFeatures += shuffledFeatures[i] + ' ';
   }
   return allFeatures;
@@ -167,3 +167,4 @@ var initMap = function (ads) {
 };
 var myAds = generateAds(ADS_COUNT);
 initMap(myAds);
+console.log(myAds);
