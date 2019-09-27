@@ -167,4 +167,3 @@ var initMap = function (ads) {
 };
 var myAds = generateAds(ADS_COUNT);
 initMap(myAds);
-console.log(myAds);
