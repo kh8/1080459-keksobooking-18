@@ -22,9 +22,12 @@ var ADS_SETTINGS = {
 };
 
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+var photoTemplate = cardTemplate.querySelector('.popup__photo');
 var similarListElement = document.querySelector('.map__pins');
 var pinImage = document.querySelector('#pin').content.querySelector('img');
 var map = document.querySelector('.map');
+var mapFilters = map.querySelector('.map__filters-container');
 
 var getCeilRandom = function (max) {
   return Math.floor(Math.random() * max) + 1;
@@ -52,7 +55,7 @@ var getRandomFeatures = function (features) {
   var allFeatures = '';
   var shuffledFeatures = shuffleArray(features);
   var featuresCount = getCeilRandom(features.length);
-  for (var i = 0; i <= featuresCount; i++) {
+  for (var i = 0; i < featuresCount; i++) {
     allFeatures += shuffledFeatures[i] + ' ';
   }
   return allFeatures;
@@ -62,7 +65,7 @@ var getRandomPhotos = function (photos) {
   var allPhotos = [];
   var shuffledPhotos = shuffleArray(photos);
   var photosCount = getCeilRandom(photos.length);
-  for (var i = 0; i <= photosCount; i++) {
+  for (var i = 0; i < photosCount; i++) {
     allPhotos.push(shuffledPhotos[i]);
   }
   return allPhotos;
@@ -75,21 +78,11 @@ var getLocation = function (minX, maxX, minY, maxY) {
   return coord;
 };
 
-var makePin = function (ad) {
-  var pin = similarPinTemplate.cloneNode(true);
-  pin.style.left = ad.location.x + 'px';
-  pin.style.top = ad.location.y + 'px';
-  pinImage.src = ad.author.avatar;
-  pinImage.alt = ad.offer.title;
-  return pin;
-};
-
-var makePinsFragment = function (myAds) {
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < myAds.length; i++) {
-    fragment.appendChild(makePin(myAds[i]));
-  }
-  return fragment;
+var translateOfferType = {
+  'flat': 'Квартира',
+  'bungalo': 'Бунгало',
+  'house': 'Дом',
+  'palace': 'Дворец'
 };
 
 var generateAd = function (adNumber) {
@@ -127,9 +120,58 @@ var generateAds = function (adsCount) {
   return ads;
 };
 
-var initMap = function (ads) {
-  map.classList.remove('map--faded');
-  similarListElement.appendChild(makePinsFragment(ads));
+var makePin = function (ad) {
+  var pin = similarPinTemplate.cloneNode(true);
+  pin.style.left = ad.location.x + 'px';
+  pin.style.top = ad.location.y + 'px';
+  pinImage.src = ad.author.avatar;
+  pinImage.alt = ad.offer.title;
+  return pin;
 };
-var myAds = generateAds(ADS_COUNT);
-initMap(myAds);
+
+var makePinsFragment = function (ads) {
+  var fragment = document.createDocumentFragment();
+  ads.forEach(function (element) {
+    fragment.appendChild(makePin(element));
+  });
+  return fragment;
+};
+
+var makePhoto = function (photoSrc) {
+  var photo = photoTemplate.cloneNode(true);
+  photo.src = photoSrc;
+  return photo;
+};
+
+var makePhotosFragment = function (currentAd) {
+  var fragment = document.createDocumentFragment();
+  currentAd.offer.photos.forEach(function (element) {
+    fragment.appendChild(makePhoto(element));
+  });
+  return fragment;
+};
+
+var renderCard = function (ad) {
+  var card = cardTemplate.cloneNode(true);
+  card.querySelector('.popup__title').textContent = ad.offer.title;
+  card.querySelector('.popup__text--address').textContent = ad.offer.address;
+  card.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
+  card.querySelector('.popup__type').textContent = translateOfferType[ad.offer.type];
+  card.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
+  card.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
+  card.querySelector('.popup__features').textContent = ad.offer.features;
+  card.querySelector('.popup__description').textContent = ad.offer.description;
+  card.querySelector('.popup__avatar').src = ad.author.avatar;
+  card.querySelector('.popup__photos').innerHTML = '';
+  card.querySelector('.popup__photos').appendChild(makePhotosFragment(ad));
+  return card;
+};
+
+var initMap = function () {
+  var myAds = generateAds(ADS_COUNT);
+  map.classList.remove('map--faded');
+  similarListElement.appendChild(makePinsFragment(myAds));
+  map.insertBefore(renderCard(myAds[0]), mapFilters);
+};
+
+initMap();
