@@ -1,5 +1,12 @@
 'use strict';
 
+var keycodes = {
+  ENTER_KEYCODE: 13,
+  ESC_KEYCODE: 27
+};
+
+var MAIN_PIN_ARROW_HEIGHT = 22;
+
 var ADS_COUNT = 8;
 var ADS_SETTINGS = {
   MIN_X: 0,
@@ -21,13 +28,27 @@ var ADS_SETTINGS = {
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg']
 };
 
+var translateOfferType = {
+  'flat': 'Квартира',
+  'bungalo': 'Бунгало',
+  'house': 'Дом',
+  'palace': 'Дворец'
+};
+
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 var photoTemplate = cardTemplate.querySelector('.popup__photo');
 var similarListElement = document.querySelector('.map__pins');
 var pinImage = document.querySelector('#pin').content.querySelector('img');
 var map = document.querySelector('.map');
-var mapFilters = map.querySelector('.map__filters-container');
+var mainPin = document.querySelector('.map__pin--main');
+var mainPinImage = mainPin.querySelector('img');
+var mapFiltersContainer = map.querySelector('.map__filters-container');
+var mapFeatures = mapFiltersContainer.querySelector('.map__features');
+var mapFilters = mapFiltersContainer.querySelectorAll('.map__filter');
+var adForm = document.querySelector('.ad-form');
+var adFormAddress = adForm.querySelector('#address');
+var adFormFieldsets = adForm.querySelectorAll('fieldset');
 
 var getCeilRandom = function (max) {
   return Math.floor(Math.random() * max) + 1;
@@ -76,13 +97,6 @@ var getLocation = function (minX, maxX, minY, maxY) {
   coord.x = getCeilRandomFromInterval(minX, maxX) - pinImage.width / 2;
   coord.y = getCeilRandomFromInterval(minY, maxY) - pinImage.height;
   return coord;
-};
-
-var translateOfferType = {
-  'flat': 'Квартира',
-  'bungalo': 'Бунгало',
-  'house': 'Дом',
-  'palace': 'Дворец'
 };
 
 var generateAd = function (adNumber) {
@@ -143,9 +157,9 @@ var makePhoto = function (photoSrc) {
   return photo;
 };
 
-var makePhotosFragment = function (currentAd) {
+var makePhotosFragment = function (photos) {
   var fragment = document.createDocumentFragment();
-  currentAd.offer.photos.forEach(function (element) {
+  photos.forEach(function (element) {
     fragment.appendChild(makePhoto(element));
   });
   return fragment;
@@ -163,15 +177,65 @@ var renderCard = function (ad) {
   card.querySelector('.popup__description').textContent = ad.offer.description;
   card.querySelector('.popup__avatar').src = ad.author.avatar;
   card.querySelector('.popup__photos').innerHTML = '';
-  card.querySelector('.popup__photos').appendChild(makePhotosFragment(ad));
+  card.querySelector('.popup__photos').appendChild(makePhotosFragment(ad.offer.photos));
   return card;
 };
 
-var initMap = function () {
-  var myAds = generateAds(ADS_COUNT);
+var disableAdForm = function () {
+  adFormFieldsets.forEach(function (element) {
+    element.disabled = true;
+  });
+};
+
+var enableAdForm = function () {
+  adForm.classList.remove('ad-form--disabled');
+  adFormFieldsets.forEach(function (element) {
+    element.disabled = false;
+  });
+};
+
+var disableMapFilters = function () {
+  mapFeatures.disabled = true;
+  mapFilters.forEach(function (element) {
+    element.disabled = true;
+  });
+};
+
+var enableMapFilters = function () {
+  mapFeatures.disabled = false;
+  mapFilters.forEach(function (element) {
+    element.disabled = false;
+  });
+};
+
+var enableMap = function () {
   map.classList.remove('map--faded');
-  similarListElement.appendChild(makePinsFragment(myAds));
-  map.insertBefore(renderCard(myAds[0]), mapFilters);
+  enableAdForm();
+  enableMapFilters();
+};
+
+var setAddress = function () {
+  adFormAddress.value = (mainPin.offsetLeft + mainPinImage.width / 2) + ', ' + (mainPin.offsetTop + MAIN_PIN_ARROW_HEIGHT);
+};
+
+mainPin.addEventListener('mousedown', function () {
+  enableMap();
+  setAddress();
+});
+
+mainPin.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === keycodes.ENTER_KEYCODE) {
+    enableMap();
+  }
+});
+
+var initMap = function () {
+  disableAdForm();
+  disableMapFilters();
+  setAddress();
+  var myAds = generateAds(ADS_COUNT);
+  // similarListElement.appendChild(makePinsFragment(myAds));
+  // map.insertBefore(renderCard(myAds[0]), mapFiltersContainer);
 };
 
 initMap();
