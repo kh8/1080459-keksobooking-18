@@ -35,21 +35,6 @@ var translateOfferType = {
   'palace': 'Дворец'
 };
 
-// var translateCapacity = {
-//   'не для гостей': 100,
-//   'для 1 гостя': 1,
-//   'для 2 гостей': 2,
-//   'для 3 гостей': 3
-// };
-
-// var translateRooms = {
-//   '100 комнат': 100,
-//   '1 комната': 1,
-//   '2 комнаты': 2,
-//   '3 комнаты': 3
-// };
-
-
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 var photoTemplate = cardTemplate.querySelector('.popup__photo');
@@ -198,53 +183,50 @@ var renderCard = function (ad) {
   return card;
 };
 
-var disableAdForm = function () {
-  adFormFieldsets.forEach(function (element) {
-    element.disabled = true;
+var setElemsAvailability = function (DOMElements, isEnabled) {
+  DOMElements.forEach(function (element) {
+    element.disabled = !isEnabled;
   });
 };
 
-var enableAdForm = function () {
-  adForm.classList.remove('ad-form--disabled');
-  adFormFieldsets.forEach(function (element) {
-    element.disabled = false;
-  });
+var setElemAvailability = function (DOMElement, isEnabled) {
+  DOMElement.disabled = !isEnabled;
 };
 
-var disableMapFilters = function () {
-  mapFeatures.disabled = true;
-  mapFilters.forEach(function (element) {
-    element.disabled = true;
-  });
-};
-
-var enableMapFilters = function () {
-  mapFeatures.disabled = false;
-  mapFilters.forEach(function (element) {
-    element.disabled = false;
-  });
-};
-
-var enableMap = function () {
-  map.classList.remove('map--faded');
-  enableAdForm();
-  enableMapFilters();
-};
-
-var setAddress = function () {
-  adFormAddress.value = (mainPin.offsetLeft + mainPinImage.width / 2) + ', ' + (mainPin.offsetTop + MAIN_PIN_ARROW_HEIGHT);
-};
-
-mainPin.addEventListener('mousedown', function () {
+var mainPinClick = function () {
   enableMap();
-  setAddress();
-});
+};
 
-mainPin.addEventListener('keydown', function (evt) {
+var mainPinEnterKeydown = function (evt) {
   if (evt.keyCode === keycodes.ENTER_KEYCODE) {
     enableMap();
   }
-});
+};
+
+var adFormRoomsChanged = function () {
+  if (checkRoomsGuestsValidity()) {
+    adFormCapacity.setCustomValidity('Некорректное число гостей');
+  } else {
+    adFormCapacity.setCustomValidity('');
+  }
+};
+
+var enableMap = function () {
+  adFormCapacity.addEventListener('change', adFormRoomsChanged);
+  adFormRooms.addEventListener('change', adFormRoomsChanged);
+  mainPin.removeEventListener('keydown', mainPinEnterKeydown);
+  mainPin.removeEventListener('click', mainPinClick);
+  map.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  fillAdFormAddress();
+  setElemsAvailability(adFormFieldsets, true);
+  setElemsAvailability(mapFilters, true);
+  setElemAvailability(mapFeatures, true);
+};
+
+var fillAdFormAddress = function () {
+  adFormAddress.value = (mainPin.offsetLeft + mainPinImage.width / 2) + ', ' + (mainPin.offsetTop + MAIN_PIN_ARROW_HEIGHT);
+};
 
 var checkRoomsGuestsValidity = function () {
   var rooms = +adFormRooms.value;
@@ -252,16 +234,13 @@ var checkRoomsGuestsValidity = function () {
   return (guests > rooms) || ((guests === 0) !== (rooms === 100));
 };
 
-adFormCapacity.addEventListener('change', function () {
-  if (checkRoomsGuestsValidity()) {
-    adFormCapacity.setCustomValidity('Error');
-  }
-});
-
 var initMap = function () {
-  disableAdForm();
-  disableMapFilters();
-  setAddress();
+  mainPin.addEventListener('mousedown', mainPinClick);
+  mainPin.addEventListener('keydown', mainPinEnterKeydown);
+  adForm.classList.add('ad-form--disabled');
+  setElemsAvailability(adFormFieldsets, false);
+  setElemsAvailability(mapFilters, false);
+  setElemAvailability(mapFeatures, false);
   var myAds = generateAds(ADS_COUNT);
   similarListElement.appendChild(makePinsFragment(myAds));
   map.insertBefore(renderCard(myAds[0]), mapFiltersContainer);
