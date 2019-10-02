@@ -183,7 +183,7 @@ var renderCard = function (ad) {
   return card;
 };
 
-var makeElemsUnavailable = function (DOMElements, isDisabled) {
+var setElemsDisabled = function (DOMElements, isDisabled) {
   DOMElements.forEach(function (element) {
     element.disabled = isDisabled;
   });
@@ -209,8 +209,8 @@ var enableMap = function () {
   adForm.classList.remove('ad-form--disabled');
   fillAdFormAddress();
   adFormFieldsets.disabled = true;
-  makeElemsUnavailable(mapFilters, true);
-  makeElemsUnavailable(mapFeatures, true);
+  setElemsDisabled(mapFilters, true);
+  setElemsDisabled(mapFeatures, true);
 };
 
 var fillAdFormAddress = function () {
@@ -227,8 +227,8 @@ var initMap = function () {
   adForm.classList.add('ad-form--disabled');
   mainPin.addEventListener('mousedown', enableMap);
   mainPin.addEventListener('keydown', mainPinEnterKeydown);
-  makeElemsUnavailable(adFormFieldsets, false);
-  makeElemsUnavailable(mapFilters, false);
+  setElemsDisabled(adFormFieldsets, false);
+  setElemsDisabled(mapFilters, false);
   mapFeatures.disabled = false;
   var myAds = generateAds(ADS_COUNT);
   similarListElement.appendChild(makePinsFragment(myAds));
