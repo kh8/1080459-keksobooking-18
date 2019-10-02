@@ -183,18 +183,10 @@ var renderCard = function (ad) {
   return card;
 };
 
-var setElemsAvailability = function (DOMElements, isEnabled) {
+var makeElemsUnavailable = function (DOMElements, isDisabled) {
   DOMElements.forEach(function (element) {
-    element.disabled = !isEnabled;
+    element.disabled = isDisabled;
   });
-};
-
-var setElemAvailability = function (DOMElement, isEnabled) {
-  DOMElement.disabled = !isEnabled;
-};
-
-var mainPinClick = function () {
-  enableMap();
 };
 
 var mainPinEnterKeydown = function (evt) {
@@ -204,24 +196,21 @@ var mainPinEnterKeydown = function (evt) {
 };
 
 var adFormRoomsChanged = function () {
-  if (checkRoomsGuestsValidity()) {
-    adFormCapacity.setCustomValidity('Некорректное число гостей');
-  } else {
-    adFormCapacity.setCustomValidity('');
-  }
+  var validityMessage = checkRoomsGuestsValidity() ? 'Некорректное число гостей' : '';
+  adFormCapacity.setCustomValidity(validityMessage);
 };
 
 var enableMap = function () {
   adFormCapacity.addEventListener('change', adFormRoomsChanged);
   adFormRooms.addEventListener('change', adFormRoomsChanged);
   mainPin.removeEventListener('keydown', mainPinEnterKeydown);
-  mainPin.removeEventListener('click', mainPinClick);
+  mainPin.removeEventListener('click', enableMap);
   map.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
   fillAdFormAddress();
-  setElemsAvailability(adFormFieldsets, true);
-  setElemsAvailability(mapFilters, true);
-  setElemAvailability(mapFeatures, true);
+  adFormFieldsets.disabled = true;
+  makeElemsUnavailable(mapFilters, true);
+  makeElemsUnavailable(mapFeatures, true);
 };
 
 var fillAdFormAddress = function () {
@@ -235,12 +224,12 @@ var checkRoomsGuestsValidity = function () {
 };
 
 var initMap = function () {
-  mainPin.addEventListener('mousedown', mainPinClick);
-  mainPin.addEventListener('keydown', mainPinEnterKeydown);
   adForm.classList.add('ad-form--disabled');
-  setElemsAvailability(adFormFieldsets, false);
-  setElemsAvailability(mapFilters, false);
-  setElemAvailability(mapFeatures, false);
+  mainPin.addEventListener('mousedown', enableMap);
+  mainPin.addEventListener('keydown', mainPinEnterKeydown);
+  makeElemsUnavailable(adFormFieldsets, false);
+  makeElemsUnavailable(mapFilters, false);
+  mapFeatures.disabled = false;
   var myAds = generateAds(ADS_COUNT);
   similarListElement.appendChild(makePinsFragment(myAds));
   map.insertBefore(renderCard(myAds[0]), mapFiltersContainer);
