@@ -138,10 +138,19 @@ var generateAds = function (adsCount) {
 
 var makePin = function (ad) {
   var pin = similarPinTemplate.cloneNode(true);
+  var pinClick = function () {
+    var lastMapCard = map.querySelector('.map__card');
+    if (lastMapCard) {
+      map.replaceChild(renderCard(ad), lastMapCard);
+    } else {
+      map.insertBefore(renderCard(ad), mapFiltersContainer);
+    }
+  };
   pin.style.left = ad.location.x + 'px';
   pin.style.top = ad.location.y + 'px';
   pinImage.src = ad.author.avatar;
   pinImage.alt = ad.offer.title;
+  pin.addEventListener('click', pinClick);
   return pin;
 };
 
@@ -209,8 +218,8 @@ var enableMap = function () {
   adForm.classList.remove('ad-form--disabled');
   fillAdFormAddress();
   adFormFieldsets.disabled = true;
+  mapFeatures.disabled = true;
   setElemsDisabled(mapFilters, true);
-  setElemsDisabled(mapFeatures, true);
 };
 
 var fillAdFormAddress = function () {
@@ -232,7 +241,6 @@ var initMap = function () {
   mapFeatures.disabled = false;
   var myAds = generateAds(ADS_COUNT);
   similarListElement.appendChild(makePinsFragment(myAds));
-  map.insertBefore(renderCard(myAds[0]), mapFiltersContainer);
 };
 
 initMap();
