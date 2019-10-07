@@ -235,12 +235,6 @@ var setElemsDisabled = function (DOMElements, isDisabled) {
   });
 };
 
-var mainPinEnterKeydownHandler = function (evt) {
-  if (evt.keyCode === keycodes.ENTER_KEYCODE) {
-    enableMap();
-  }
-};
-
 var adFormRoomsChangeHandler = function () {
   var validityMessage = checkRoomsGuestsValidity() ? 'Некорректное число гостей' : '';
   adFormCapacity.setCustomValidity(validityMessage);
@@ -307,56 +301,73 @@ var checkRoomsGuestsValidity = function () {
   return (guests > rooms) || ((guests === 0) !== (rooms === 100));
 };
 
+var mainPinClickHandler = function () {
+  enableMap();
+  mainPin.removeEventListener('click', mainPinClickHandler);
+};
+
+var mainPinEnterKeydownHandler = function (evt) {
+  if (evt.keyCode === keycodes.ENTER_KEYCODE) {
+    enableMap();
+    mainPin.removeEventListener('click', mainPinEnterKeydownHandler);
+  }
+};
+
+var mainPinMouseDownHandler = function (evt) {
+  evt.preventDefault();
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  var currentCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  var dragged = false;
+  var mouseMoveHandler = function (moveEvt) {
+    moveEvt.preventDefault();
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+    currentCoords.x = mainPin.offsetLeft - shift.x;
+    currentCoords.y = mainPin.offsetTop - shift.y;
+    mainPin.style.left = currentCoords.x + 'px';
+    mainPin.style.top = currentCoords.y + 'px';
+    adFormAddress.value = Math.floor(currentCoords.x + MAIN_PIN_IMAGE_PARAMS.width / 2) + ', ' + Math.floor(currentCoords.y + MAIN_PIN_IMAGE_PARAMS.height);
+  };
+
+  var mouseUpHandler = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', mouseMoveHandler);
+    document.removeEventListener('mouseup', mouseUpHandler);
+    if (dragged) {
+      var onClickPreventDefault = function (evt1) {
+        evt1.preventDefault();
+        mainPin.removeEventListener('click', onClickPreventDefault);
+      };
+      mainPin.addEventListener('click', onClickPreventDefault);
+    }
+    mainPin.removeEventListener('mousedown', enableMap);
+  };
+
+  document.addEventListener('mousemove', mouseMoveHandler);
+  document.addEventListener('mouseup', mouseUpHandler);
+};
 
 var initMap = function () {
   adForm.classList.add('ad-form--disabled');
-  mainPin.addEventListener('mousedown', enableMap);
-  mainPin.addEventListener('mousedown', function (evt) {
-    evt.preventDefault();
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
-    var currentCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
-    var dragged = false;
-    var mouseMoveHandler = function (moveEvt) {
-      moveEvt.preventDefault();
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
-      };
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
-      currentCoords.x = mainPin.offsetLeft - shift.x;
-      currentCoords.y = mainPin.offsetTop - shift.y;
-      mainPin.style.left = currentCoords.x + 'px';
-      mainPin.style.top = currentCoords.y + 'px';
-      adFormAddress.value = Math.floor(currentCoords.x + MAIN_PIN_IMAGE_PARAMS.width / 2) + ', ' + Math.floor(currentCoords.y + MAIN_PIN_IMAGE_PARAMS.height);
-    };
-
-    var mouseUpHandler = function (upEvt) {
-      upEvt.preventDefault();
-      document.removeEventListener('mousemove', mouseMoveHandler);
-      document.removeEventListener('mouseup', mouseUpHandler);
-      if (dragged) {
-        var onClickPreventDefault = function (evt1) {
-          evt1.preventDefault();
-          mainPin.removeEventListener('click', onClickPreventDefault);
-        };
-        mainPin.addEventListener('click', onClickPreventDefault);
-      }
-      mainPin.removeEventListener('mousedown', enableMap);
-    };
-
-    document.addEventListener('mousemove', mouseMoveHandler);
-    document.addEventListener('mouseup', mouseUpHandler);
+  mainPin.addEventListener('click', mainPinClickHandler);
+  mainPin.addEventListener('keydown', function () {
+    mainPinEnterKeydownHandler(window.event);
   });
-  mainPin.addEventListener('keydown', mainPinEnterKeydownHandler);
+  mainPin.addEventListener('mousedown', function () {
+    mainPinMouseDownHandler(window.event);
+  });
   setElemsDisabled(adFormFieldsets, false);
   setElemsDisabled(mapFilters, false);
   mapFeatures.disabled = false;
