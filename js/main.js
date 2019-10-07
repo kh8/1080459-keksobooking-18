@@ -49,7 +49,7 @@ var PIN_IMAGE_PARAMS = {
 
 var MAIN_PIN_IMAGE_PARAMS = {
   width: 65,
-  height: 65
+  height: 87
 };
 
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -115,7 +115,7 @@ var getRandomPhotos = function (photos) {
 
 var getLocation = function (minX, maxX, minY, maxY) {
   var coord = {};
-  coord.x = getCeilRandomFromInterval(minX, maxX) - PIN_IMAGE_PARAMS.width / 2;
+  coord.x = getCeilRandomFromInterval(minX, maxX) - Math.floor(PIN_IMAGE_PARAMS.width / 2);
   coord.y = getCeilRandomFromInterval(minY, maxY) - PIN_IMAGE_PARAMS.height;
   return coord;
 };
@@ -235,50 +235,58 @@ var setElemsDisabled = function (DOMElements, isDisabled) {
   });
 };
 
-var mainPinEnterKeydown = function (evt) {
+var mainPinEnterKeydownHandler = function (evt) {
   if (evt.keyCode === keycodes.ENTER_KEYCODE) {
     enableMap();
   }
 };
 
-var adFormRoomsChanged = function () {
+var adFormRoomsChangeHandler = function () {
   var validityMessage = checkRoomsGuestsValidity() ? 'Некорректное число гостей' : '';
   adFormCapacity.setCustomValidity(validityMessage);
 };
 
-var adFormPriceChanged = function () {
+var adFormPriceChangeHandler = function () {
   var minPrice = housingMinPrice[adFormType.value];
   if (adFormPrice.value < minPrice) {
     var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до 1000000';
     adFormPrice.setCustomValidity(validityMessage);
+  } else {
+    adFormPrice.setCustomValidity('');
   }
 };
 
-var adFormTypeChanged = function () {
+var adFormTypeChangeHandler = function () {
   var minPrice = housingMinPrice[adFormType.value];
   adFormPrice.placeholder = minPrice;
   if (adFormPrice.value < minPrice) {
     var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до 1000000';
     adFormPrice.setCustomValidity(validityMessage);
+  } else {
+    adFormPrice.setCustomValidity('');
   }
 };
 
-var adFormCheckInChanged = function () {
-  adFormCheckOut.value = adFormCheckIn.value;
+var adFormCheckInChangeHandler = function (evt) {
+  adFormCheckOut.value = evt.currentTarget.value;
 };
 
-var adFormCheckOutChanged = function () {
-  adFormCheckIn.value = adFormCheckOut.value;
+var adFormCheckOutChangeHandler = function (evt) {
+  adFormCheckIn.value = evt.currentTarget.value;
 };
 
 var enableMap = function () {
-  adFormCapacity.addEventListener('change', adFormRoomsChanged);
-  adFormRooms.addEventListener('change', adFormRoomsChanged);
-  adFormPrice.addEventListener('change', adFormPriceChanged);
-  adFormType.addEventListener('change', adFormTypeChanged);
-  adFormCheckIn.addEventListener('change', adFormCheckInChanged);
-  adFormCheckOut.addEventListener('change', adFormCheckOutChanged);
-  mainPin.removeEventListener('keydown', mainPinEnterKeydown);
+  adFormCapacity.addEventListener('change', adFormRoomsChangeHandler);
+  adFormRooms.addEventListener('change', adFormRoomsChangeHandler);
+  adFormPrice.addEventListener('change', adFormPriceChangeHandler);
+  adFormType.addEventListener('change', adFormTypeChangeHandler);
+  adFormCheckIn.addEventListener('change', function () {
+    adFormCheckInChangeHandler(window.event);
+  });
+  adFormCheckOut.addEventListener('change', function () {
+    adFormCheckOutChangeHandler(window.event);
+  });
+  mainPin.removeEventListener('keydown', mainPinEnterKeydownHandler);
   mainPin.removeEventListener('click', enableMap);
   map.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
@@ -299,10 +307,6 @@ var checkRoomsGuestsValidity = function () {
   return (guests > rooms) || ((guests === 0) !== (rooms === 100));
 };
 
-// var checkPriceValidity = function () {
-//   var price = +adFormPrice.value;
-//   return (price < 0) || (price > 1000000);
-// };
 
 var initMap = function () {
   adForm.classList.add('ad-form--disabled');
@@ -318,7 +322,7 @@ var initMap = function () {
       y: evt.clientY
     };
     var dragged = false;
-    var onMouseMove = function (moveEvt) {
+    var mouseMoveHandler = function (moveEvt) {
       moveEvt.preventDefault();
       var shift = {
         x: startCoords.x - moveEvt.clientX,
@@ -332,13 +336,13 @@ var initMap = function () {
       currentCoords.y = mainPin.offsetTop - shift.y;
       mainPin.style.left = currentCoords.x + 'px';
       mainPin.style.top = currentCoords.y + 'px';
-      adFormAddress.value = (currentCoords.x + MAIN_PIN_IMAGE_PARAMS.width / 2) + ', ' + (currentCoords.y + MAIN_PIN_IMAGE_PARAMS.height);
+      adFormAddress.value = Math.floor(currentCoords.x + MAIN_PIN_IMAGE_PARAMS.width / 2) + ', ' + Math.floor(currentCoords.y + MAIN_PIN_IMAGE_PARAMS.height);
     };
 
-    var onMouseUp = function (upEvt) {
+    var mouseUpHandler = function (upEvt) {
       upEvt.preventDefault();
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
       if (dragged) {
         var onClickPreventDefault = function (evt1) {
           evt1.preventDefault();
@@ -349,10 +353,10 @@ var initMap = function () {
       mainPin.removeEventListener('mousedown', enableMap);
     };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
   });
-  mainPin.addEventListener('keydown', mainPinEnterKeydown);
+  mainPin.addEventListener('keydown', mainPinEnterKeydownHandler);
   setElemsDisabled(adFormFieldsets, false);
   setElemsDisabled(mapFilters, false);
   mapFeatures.disabled = false;
