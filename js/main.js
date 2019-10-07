@@ -35,19 +35,19 @@ var translateOfferType = {
   'palace': 'Дворец'
 };
 
-var translateOfferTypeMinPrice = {
+var housingMinPrice = {
   'flat': 1000,
   'bungalo': 0,
   'house': 5000,
   'palace': 10000
 };
 
-var pinImageParams = {
+var PIN_IMAGE_PARAMS = {
   width: 40,
   height: 40
 };
 
-var mainPinImageParams = {
+var MAIN_PIN_IMAGE_PARAMS = {
   width: 65,
   height: 65
 };
@@ -115,8 +115,8 @@ var getRandomPhotos = function (photos) {
 
 var getLocation = function (minX, maxX, minY, maxY) {
   var coord = {};
-  coord.x = getCeilRandomFromInterval(minX, maxX) - pinImageParams.width / 2;
-  coord.y = getCeilRandomFromInterval(minY, maxY) - pinImageParams.height;
+  coord.x = getCeilRandomFromInterval(minX, maxX) - PIN_IMAGE_PARAMS.width / 2;
+  coord.y = getCeilRandomFromInterval(minY, maxY) - PIN_IMAGE_PARAMS.height;
   return coord;
 };
 
@@ -247,15 +247,20 @@ var adFormRoomsChanged = function () {
 };
 
 var adFormPriceChanged = function () {
-  var validityMessage = checkPriceValidity() ? 'Цена за ночь должна быть в интервале от 0 до 1000000' : '';
-  adFormPrice.setCustomValidity(validityMessage);
+  var minPrice = housingMinPrice[adFormType.value];
+  if (adFormPrice.value < minPrice) {
+    var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до 1000000';
+    adFormPrice.setCustomValidity(validityMessage);
+  }
 };
 
 var adFormTypeChanged = function () {
-  var minPrice = translateOfferTypeMinPrice[adFormType.value];
-  var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до 1000000';
-  adFormPrice.setCustomValidity(validityMessage);
+  var minPrice = housingMinPrice[adFormType.value];
   adFormPrice.placeholder = minPrice;
+  if (adFormPrice.value < minPrice) {
+    var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до 1000000';
+    adFormPrice.setCustomValidity(validityMessage);
+  }
 };
 
 var adFormCheckInChanged = function () {
@@ -294,10 +299,10 @@ var checkRoomsGuestsValidity = function () {
   return (guests > rooms) || ((guests === 0) !== (rooms === 100));
 };
 
-var checkPriceValidity = function () {
-  var price = +adFormPrice.value;
-  return (price < 0) || (price > 1000000);
-};
+// var checkPriceValidity = function () {
+//   var price = +adFormPrice.value;
+//   return (price < 0) || (price > 1000000);
+// };
 
 var initMap = function () {
   adForm.classList.add('ad-form--disabled');
@@ -327,7 +332,7 @@ var initMap = function () {
       currentCoords.y = mainPin.offsetTop - shift.y;
       mainPin.style.left = currentCoords.x + 'px';
       mainPin.style.top = currentCoords.y + 'px';
-      adFormAddress.value = (currentCoords.x + mainPinImageParams.width / 2) + ', ' + (currentCoords.y + mainPinImageParams.height);
+      adFormAddress.value = (currentCoords.x + MAIN_PIN_IMAGE_PARAMS.width / 2) + ', ' + (currentCoords.y + MAIN_PIN_IMAGE_PARAMS.height);
     };
 
     var onMouseUp = function (upEvt) {
