@@ -40,10 +40,10 @@
     card.querySelector('.popup__photos').innerHTML = '';
     card.querySelector('.popup__photos').appendChild(makePhotosFragment(ad.offer.photos));
     var closePopup = function () {
-      window.map.map.removeChild(card);
+      window.map.mapElement.removeChild(card);
     };
     var onPopupEscPress = function (evt) {
-      if (evt.keyCode === window.map.keycodes.ESC_KEYCODE) {
+      if (evt.keyCode === window.constants.keycodes.ESC_KEYCODE) {
         closePopup();
       }
     };
@@ -54,7 +54,7 @@
   };
 
   window.card = {
-    makeCard: makeCard
+    make: makeCard
   };
 
 })();

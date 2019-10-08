@@ -2,13 +2,6 @@
 
 (function () {
 
-  var housingMinPrice = {
-    'flat': 1000,
-    'bungalo': 0,
-    'house': 5000,
-    'palace': 10000
-  };
-
   var form = document.querySelector('.ad-form');
   var address = form.querySelector('#address');
   var fieldsets = form.querySelectorAll('fieldset');
@@ -22,7 +15,7 @@
   var checkRoomsGuestsValidity = function () {
     var places = +rooms.value;
     var guests = +capacity.value;
-    return (guests > places) || ((guests === 0) !== (places === 100));
+    return (guests > places) || ((guests === window.constants.formExtremums.MIN_CAPACITY) !== (places === window.constants.formExtremums.MAX_ROOMS));
   };
 
   var onRoomsChange = function () {
@@ -35,8 +28,8 @@
     capacity.setCustomValidity(validityMessage);
   };
 
-  var onPriceChange = function () {
-    var minPrice = housingMinPrice[type.value];
+  var onPriceInvalid = function () {
+    var minPrice = window.constants.housingMinPrice[type.value];
     if (price.value < minPrice) {
       var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до 1000000';
       price.setCustomValidity(validityMessage);
@@ -46,7 +39,7 @@
   };
 
   var onTypeChange = function () {
-    var minPrice = housingMinPrice[type.value];
+    var minPrice = window.constants.housingMinPrice[type.value];
     price.placeholder = minPrice;
     if (price.value < minPrice) {
       var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до 1000000';
@@ -64,29 +57,35 @@
     checkIn.value = evt.currentTarget.value;
   };
 
-  var initForm = function () {
+  var fillAddress = function (pinX, pinY) {
+    address.value = Math.floor(pinX + window.constants.MAIN_PIN_PARAMS.HALF_WIDTH) + ', ' + Math.floor(pinY + window.constants.MAIN_PIN_PARAMS.HEIGHT);
+  };
+
+  var disableForm = function () {
+    form.classList.add('ad-form--disabled');
+    window.utils.setElemsDisabled(fieldsets, true);
+    rooms.removeEventListener('change', onRoomsChange);
+    capacity.removeEventListener('change', onCapacityChange);
+    price.removeEventListener('invalid', onPriceInvalid);
+    type.removeEventListener('change', onTypeChange);
+    checkIn.removeEventListener('change', onCheckInChange);
+    checkOut.removeEventListener('change', onCheckOutChange);
+  };
+
+  var enableForm = function () {
+    form.classList.remove('ad-form--disabled');
+    window.utils.setElemsDisabled(fieldsets, false);
     rooms.addEventListener('change', onRoomsChange);
     capacity.addEventListener('change', onCapacityChange);
-    price.addEventListener('change', onPriceChange);
+    price.addEventListener('invalid', onPriceInvalid);
     type.addEventListener('change', onTypeChange);
-    checkIn.addEventListener('change', function () {
-      onCheckInChange(window.event);
-    });
-    checkOut.addEventListener('change', function () {
-      onCheckOutChange(window.event);
-    });
+    checkIn.addEventListener('change', onCheckInChange);
+    checkOut.addEventListener('change', onCheckOutChange);
   };
 
   window.form = {
-    form: form,
-    address: address,
-    fieldsets: fieldsets,
-    rooms: rooms,
-    capacity: capacity,
-    price: price,
-    type: type,
-    checkIn: checkIn,
-    checkOut: checkOut,
-    initForm: initForm
+    fillAddress: fillAddress,
+    enable: enableForm,
+    disable: disableForm
   };
 })();

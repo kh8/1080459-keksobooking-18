@@ -8,11 +8,11 @@
     var pin = similarPinTemplate.cloneNode(true);
     var pinImage = pin.querySelector('img');
     var openPopup = function () {
-      var lastMapCard = window.map.map.querySelector('.map__card');
+      var lastMapCard = window.map.mapElement.querySelector('.map__card');
       if (lastMapCard) {
-        window.map.map.replaceChild(window.card.makeCard(ad), lastMapCard);
+        window.map.mapElement.replaceChild(window.card.make(ad), lastMapCard);
       } else {
-        window.map.map.insertBefore(window.card.makeCard(ad), window.mapFiltersContainer);
+        window.map.mapElement.insertBefore(window.card.make(ad), window.mapFiltersContainer);
       }
     };
 
@@ -22,7 +22,7 @@
     pinImage.alt = ad.offer.title;
     pin.addEventListener('click', openPopup);
     pin.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.keycodes.ENTER_KEYCODE) {
+      if (evt.keyCode === window.constants.keycodes.ENTER_KEYCODE) {
         openPopup();
       }
     });
@@ -30,7 +30,7 @@
   };
 
   window.pin = {
-    makePin: makePin
+    make: makePin
   };
 
 })();
