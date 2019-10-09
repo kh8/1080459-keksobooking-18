@@ -86,7 +86,7 @@
     window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
     features.disabled = true;
     window.utils.setElemsDisabled(filters, true);
-    similarListElement.appendChild(makePinsFragment(window.data.generateAds(ADS_COUNT)));
+    similarListElement.appendChild(makePinsFragment(window.data.generate(ADS_COUNT)));
   };
 
   var initMap = function () {
@@ -98,8 +98,22 @@
     mainPin.addEventListener('mousedown', onMainPinMouseDown);
   };
 
+  var openCard = function (currentAd) {
+    var lastMapCard = map.querySelector('.map__card');
+    if (lastMapCard) {
+      map.replaceChild(window.card.make(currentAd), lastMapCard);
+    } else {
+      map.insertBefore(window.card.make(currentAd), window.mapFiltersContainer);
+    }
+  };
+
+  var closeCard = function (cardToClose) {
+    map.removeChild(cardToClose);
+  };
+
   window.map = {
-    mapElement: map,
+    openCard: openCard,
+    closeCard: closeCard,
   };
 
   initMap();

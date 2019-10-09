@@ -40,13 +40,8 @@
 
   var onTypeChange = function () {
     var minPrice = window.constants.housingMinPrice[type.value];
+    price.min = minPrice;
     price.placeholder = minPrice;
-    if (price.value < minPrice) {
-      var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до 1000000';
-      price.setCustomValidity(validityMessage);
-    } else {
-      price.setCustomValidity('');
-    }
   };
 
   var onCheckInChange = function (evt) {
@@ -77,6 +72,7 @@
     window.utils.setElemsDisabled(fieldsets, false);
     rooms.addEventListener('change', onRoomsChange);
     capacity.addEventListener('change', onCapacityChange);
+    price.max = window.constants.formExtremums.MAX_PRICE;
     price.addEventListener('invalid', onPriceInvalid);
     type.addEventListener('change', onTypeChange);
     checkIn.addEventListener('change', onCheckInChange);

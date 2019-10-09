@@ -21,15 +21,10 @@
       'http://o0.github.io/assets/images/tokyo/hotel3.jpg']
   };
 
-  var PIN_IMAGE_PARAMS = {
-    width: 40,
-    height: 40
-  };
-
   var getLocation = function (minX, maxX, minY, maxY) {
     var coord = {};
-    coord.x = getCeilRandomFromInterval(minX, maxX) - Math.floor(PIN_IMAGE_PARAMS.width / 2);
-    coord.y = getCeilRandomFromInterval(minY, maxY) - PIN_IMAGE_PARAMS.height;
+    coord.x = getCeilRandomFromInterval(minX, maxX) - Math.floor(window.constants.PIN_PARAMS.width / 2);
+    coord.y = getCeilRandomFromInterval(minY, maxY) - window.constants.PIN_PARAMS.height;
     return coord;
   };
 
@@ -111,7 +106,7 @@
   };
 
   window.data = {
-    generateAds: generateAds
+    generate: generateAds
   };
 
 })();

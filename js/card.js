@@ -40,11 +40,11 @@
     card.querySelector('.popup__photos').innerHTML = '';
     card.querySelector('.popup__photos').appendChild(makePhotosFragment(ad.offer.photos));
     var closePopup = function () {
-      window.map.mapElement.removeChild(card);
+      window.map.closeCard(card);
     };
     var onPopupEscPress = function (evt) {
       if (evt.keyCode === window.constants.keycodes.ESC_KEYCODE) {
-        closePopup();
+        window.map.closeCard(card);
       }
     };
     var popupClose = card.querySelector('.popup__close');
