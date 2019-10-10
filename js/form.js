@@ -21,8 +21,8 @@
   };
 
   var setTitleValidity = function () {
-    if ((title.value.length < title.minLength) || (title.value.length > title.maxLength)) {
-      var validityMessage = 'Длина заголовка должна быть от ' + title.minLength + ' до ' + title.maxLength + ' символов';
+    if ((title.value.length < 30) || (title.value.length > 100)) {
+      var validityMessage = 'Длина заголовка должна быть от ' + '30' + ' до ' + '100' + ' символов';
       title.setCustomValidity(validityMessage);
     } else {
       title.setCustomValidity('');
@@ -41,6 +41,11 @@
     } else {
       price.setCustomValidity('');
     }
+  };
+
+  var onTitleKeydown = function () {
+    var validityMessage = '';
+    title.setCustomValidity(validityMessage);
   };
 
   var onTypeChange = function () {
@@ -80,6 +85,7 @@
     form.classList.remove('ad-form--disabled');
     submitBtn.addEventListener('click', validateForm);
     window.utils.setElemsDisabled(fieldsets, false);
+    title.addEventListener('keydown', onTitleKeydown);
     type.addEventListener('change', onTypeChange);
     checkIn.addEventListener('change', onCheckInChange);
     checkOut.addEventListener('change', onCheckOutChange);
