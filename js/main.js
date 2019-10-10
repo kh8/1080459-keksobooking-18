@@ -13,21 +13,7 @@
   var makePinsFragment = function (ads) {
     var fragment = document.createDocumentFragment();
     ads.forEach(function (element) {
-
-      var onPinClick = function () {
-        window.card.show(element, map, filtersContainer);
-      };
-
-      var onPinKeydown = function (evt) {
-        if (evt.keyCode === window.constants.keycodes.ENTER_KEYCODE) {
-          window.card.show(element, map, filtersContainer);
-        }
-      };
-
-      var currentPin = window.pin.make(element);
-      currentPin.addEventListener('click', onPinClick);
-      currentPin.addEventListener('keydown', onPinKeydown);
-      fragment.appendChild(currentPin);
+      fragment.appendChild(window.pin.make(element, map, filtersContainer));
     });
     return fragment;
   };
