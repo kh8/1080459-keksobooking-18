@@ -2,8 +2,6 @@
 
 (function () {
 
-  var ADS_COUNT = 8;
-
   var map = document.querySelector('.map');
   var filtersContainer = map.querySelector('.map__filters-container');
   var features = filtersContainer.querySelector('.map__features');
@@ -15,7 +13,21 @@
   var makePinsFragment = function (ads) {
     var fragment = document.createDocumentFragment();
     ads.forEach(function (element) {
-      fragment.appendChild(window.pin.make(element));
+
+      var onPinClick = function () {
+        window.card.show(element, map, filtersContainer);
+      };
+
+      var onPinKeydown = function (evt) {
+        if (evt.keyCode === window.constants.keycodes.ENTER_KEYCODE) {
+          window.card.show(element, map, filtersContainer);
+        }
+      };
+
+      var currentPin = window.pin.make(element);
+      currentPin.addEventListener('click', onPinClick);
+      currentPin.addEventListener('keydown', onPinKeydown);
+      fragment.appendChild(currentPin);
     });
     return fragment;
   };
@@ -86,7 +98,7 @@
     window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
     features.disabled = true;
     window.utils.setElemsDisabled(filters, true);
-    similarListElement.appendChild(makePinsFragment(window.data.generate(ADS_COUNT)));
+    similarListElement.appendChild(makePinsFragment(window.data.generateAds(window.data.ADS_COUNT)));
   };
 
   var initMap = function () {
@@ -96,24 +108,6 @@
     mainPin.addEventListener('click', onMainPinClick);
     mainPin.addEventListener('keydown', onMainPinEnterKeydown);
     mainPin.addEventListener('mousedown', onMainPinMouseDown);
-  };
-
-  var openCard = function (currentAd) {
-    var lastMapCard = map.querySelector('.map__card');
-    if (lastMapCard) {
-      map.replaceChild(window.card.make(currentAd), lastMapCard);
-    } else {
-      map.insertBefore(window.card.make(currentAd), window.mapFiltersContainer);
-    }
-  };
-
-  var closeCard = function (cardToClose) {
-    map.removeChild(cardToClose);
-  };
-
-  window.map = {
-    openCard: openCard,
-    closeCard: closeCard,
   };
 
   initMap();

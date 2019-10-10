@@ -2,14 +2,14 @@
 
 (function () {
 
-  var MAIN_PIN_PARAMS = {
-    HALF_WIDTH: 32.5,
+  var mainPinParams = {
+    WIDTH: 65,
     HEIGHT: 87,
   };
 
-  var PIN_PARAMS = {
-    width: 40,
-    height: 40
+  var pinParams = {
+    WIDTH: 40,
+    HEIGHT: 40
   };
 
   var keycodes = {
@@ -25,10 +25,10 @@
   };
 
   var housingMinPrice = {
-    'flat': 1000,
-    'bungalo': 0,
-    'house': 5000,
-    'palace': 10000
+    flat: 1000,
+    bungalo: 0,
+    house: 5000,
+    palace: 10000
   };
 
   var formExtremums = {
@@ -39,8 +39,8 @@
 
   window.constants = {
     keycodes: keycodes,
-    MAIN_PIN_PARAMS: MAIN_PIN_PARAMS,
-    PIN_PARAMS: PIN_PARAMS,
+    mainPinParams: mainPinParams,
+    pinParams: pinParams,
     translateOfferType: translateOfferType,
     housingMinPrice: housingMinPrice,
     formExtremums: formExtremums

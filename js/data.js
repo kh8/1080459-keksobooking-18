@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+
+  var ADS_COUNT = 8;
+
   var ADS_SETTINGS = {
     MIN_X: 0,
     MAX_X: 1200,
@@ -23,37 +26,15 @@
 
   var getLocation = function (minX, maxX, minY, maxY) {
     var coord = {};
-    coord.x = getCeilRandomFromInterval(minX, maxX) - Math.floor(window.constants.PIN_PARAMS.width / 2);
-    coord.y = getCeilRandomFromInterval(minY, maxY) - window.constants.PIN_PARAMS.height;
+    coord.x = window.utils.getCeilRandomFromInterval(minX, maxX) - Math.floor(window.constants.pinParams.WIDTH / 2);
+    coord.y = window.utils.getCeilRandomFromInterval(minY, maxY) - window.constants.pinParams.HEIGHT;
     return coord;
-  };
-
-  var getCeilRandom = function (max) {
-    return Math.floor(Math.random() * max) + 1;
-  };
-
-  var getCeilRandomFromInterval = function (min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
-  };
-
-  var getRandomElementFromArray = function (array) {
-    return array[getCeilRandomFromInterval(0, array.length)];
-  };
-
-  var shuffleArray = function (array) {
-    for (var i = array.length - 1; i > 0; i--) {
-      var j = getCeilRandom(i);
-      var temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    }
-    return array;
   };
 
   var getRandomFeatures = function (features) {
     var allFeatures = '';
-    var shuffledFeatures = shuffleArray(features);
-    var featuresCount = getCeilRandom(features.length);
+    var shuffledFeatures = window.utils.shuffleArray(features);
+    var featuresCount = window.utils.getCeilRandom(features.length);
     for (var i = 0; i < featuresCount; i++) {
       allFeatures += shuffledFeatures[i] + ' ';
     }
@@ -62,8 +43,8 @@
 
   var getRandomPhotos = function (photos) {
     var allPhotos = [];
-    var shuffledPhotos = shuffleArray(photos);
-    var photosCount = getCeilRandom(photos.length);
+    var shuffledPhotos = window.utils.shuffleArray(photos);
+    var photosCount = window.utils.getCeilRandom(photos.length);
     for (var i = 0; i < photosCount; i++) {
       allPhotos.push(shuffledPhotos[i]);
     }
@@ -77,16 +58,16 @@
         avatar: 'img/avatars/user0' + adNumber + '.png'
       },
       offer: {
-        title: getRandomElementFromArray(ADS_SETTINGS.TITLES),
+        title: window.utils.getRandomElementFromArray(ADS_SETTINGS.TITLES),
         address: adLocation.x + ' ' + adLocation.y,
-        price: getCeilRandom(ADS_SETTINGS.MAX_PRICE),
-        type: getRandomElementFromArray(ADS_SETTINGS.TYPES),
-        rooms: getCeilRandom(ADS_SETTINGS.MAX_ROOMS),
-        guests: getCeilRandomFromInterval(0, ADS_SETTINGS.MAX_GUESTS),
-        checkin: getRandomElementFromArray(ADS_SETTINGS.CHECKINS),
-        checkout: getRandomElementFromArray(ADS_SETTINGS.CHECKOUTS),
+        price: window.utils.getCeilRandom(ADS_SETTINGS.MAX_PRICE),
+        type: window.utils.getRandomElementFromArray(ADS_SETTINGS.TYPES),
+        rooms: window.utils.getCeilRandom(ADS_SETTINGS.MAX_ROOMS),
+        guests: window.utils.getCeilRandomFromInterval(0, ADS_SETTINGS.MAX_GUESTS),
+        checkin: window.utils.getRandomElementFromArray(ADS_SETTINGS.CHECKINS),
+        checkout: window.utils.getRandomElementFromArray(ADS_SETTINGS.CHECKOUTS),
         features: getRandomFeatures(ADS_SETTINGS.FEATURES),
-        description: getRandomElementFromArray(ADS_SETTINGS.DESCRIPTIONS),
+        description: window.utils.getRandomElementFromArray(ADS_SETTINGS.DESCRIPTIONS),
         photos: getRandomPhotos(ADS_SETTINGS.PHOTOS)
       },
       location: {
@@ -106,7 +87,8 @@
   };
 
   window.data = {
-    generate: generateAds
+    ADS_COUNT: ADS_COUNT,
+    generateAds: generateAds
   };
 
 })();

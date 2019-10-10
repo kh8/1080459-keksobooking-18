@@ -3,6 +3,7 @@
 (function () {
 
   var form = document.querySelector('.ad-form');
+  var title = form.querySelector('#title');
   var address = form.querySelector('#address');
   var fieldsets = form.querySelectorAll('fieldset');
   var rooms = form.querySelector('#room_number');
@@ -11,6 +12,7 @@
   var type = form.querySelector('#type');
   var checkIn = form.querySelector('#timein');
   var checkOut = form.querySelector('#timeout');
+  var submitBtn = form.querySelector('.ad-form__submit');
 
   var checkRoomsGuestsValidity = function () {
     var places = +rooms.value;
@@ -18,20 +20,23 @@
     return (guests > places) || ((guests === window.constants.formExtremums.MIN_CAPACITY) !== (places === window.constants.formExtremums.MAX_ROOMS));
   };
 
-  var onRoomsChange = function () {
+  var setTitleValidity = function () {
+    if ((title.value.length < title.minLength) || (title.value.length > title.maxLength)) {
+      var validityMessage = 'Длина заголовка должна быть от ' + title.minLength + ' до ' + title.maxLength + ' символов';
+      title.setCustomValidity(validityMessage);
+    } else {
+      title.setCustomValidity('');
+    }
+  };
+
+  var setCapacityValidity = function () {
     var validityMessage = checkRoomsGuestsValidity() ? 'Некорректное число гостей' : '';
     capacity.setCustomValidity(validityMessage);
   };
 
-  var onCapacityChange = function () {
-    var validityMessage = checkRoomsGuestsValidity() ? 'Некорректное число гостей' : '';
-    capacity.setCustomValidity(validityMessage);
-  };
-
-  var onPriceInvalid = function () {
-    var minPrice = window.constants.housingMinPrice[type.value];
-    if (price.value < minPrice) {
-      var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до 1000000';
+  var setPriceValidity = function () {
+    if ((+price.value < price.min) || (+price.value > price.max)) {
+      var validityMessage = 'Цена за ночь должна быть в интервале от ' + price.min + ' до ' + price.max;
       price.setCustomValidity(validityMessage);
     } else {
       price.setCustomValidity('');
@@ -52,16 +57,20 @@
     checkIn.value = evt.currentTarget.value;
   };
 
+  var validateForm = function () {
+    setTitleValidity();
+    setPriceValidity();
+    setCapacityValidity();
+  };
+
   var fillAddress = function (pinX, pinY) {
-    address.value = Math.floor(pinX + window.constants.MAIN_PIN_PARAMS.HALF_WIDTH) + ', ' + Math.floor(pinY + window.constants.MAIN_PIN_PARAMS.HEIGHT);
+    address.value = Math.floor(pinX + window.constants.mainPinParams.WIDTH / 2) + ', ' + Math.floor(pinY + window.constants.mainPinParams.HEIGHT);
   };
 
   var disableForm = function () {
     form.classList.add('ad-form--disabled');
+    submitBtn.removeEventListener('click', validateForm);
     window.utils.setElemsDisabled(fieldsets, true);
-    rooms.removeEventListener('change', onRoomsChange);
-    capacity.removeEventListener('change', onCapacityChange);
-    price.removeEventListener('invalid', onPriceInvalid);
     type.removeEventListener('change', onTypeChange);
     checkIn.removeEventListener('change', onCheckInChange);
     checkOut.removeEventListener('change', onCheckOutChange);
@@ -69,14 +78,13 @@
 
   var enableForm = function () {
     form.classList.remove('ad-form--disabled');
+    submitBtn.addEventListener('click', validateForm);
     window.utils.setElemsDisabled(fieldsets, false);
-    rooms.addEventListener('change', onRoomsChange);
-    capacity.addEventListener('change', onCapacityChange);
-    price.max = window.constants.formExtremums.MAX_PRICE;
-    price.addEventListener('invalid', onPriceInvalid);
     type.addEventListener('change', onTypeChange);
     checkIn.addEventListener('change', onCheckInChange);
     checkOut.addEventListener('change', onCheckOutChange);
+    price.min = price.placeholder;
+    price.max = window.constants.formExtremums.MAX_PRICE;
   };
 
   window.form = {
