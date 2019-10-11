@@ -22,45 +22,42 @@
     }
   };
 
+
   var onMainPinMouseDown = function (evt) {
-    evt.preventDefault();
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
+    var dragoffset = {
+      x: evt.clientX - mainPin.offsetLeft,
+      y: evt.clientY - mainPin.offsetTop
     };
-    var currentCoords = {
-      x: evt.clientX,
-      y: evt.clientY
+    var offset = {
+      x: 0,
+      y: 0
     };
-    var dragged = false;
+
     var onMouseMove = function (moveEvt) {
-      moveEvt.preventDefault();
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
-      };
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
-      currentCoords.x = mainPin.offsetLeft - shift.x;
-      currentCoords.y = mainPin.offsetTop - shift.y;
-      mainPin.style.left = currentCoords.x + 'px';
-      mainPin.style.top = currentCoords.y + 'px';
-      window.form.fillAddress(currentCoords.x, currentCoords.y);
+      if (moveEvt.clientX - dragoffset.x < 0) {
+        offset.x = 0;
+      } else if (moveEvt.clientX - dragoffset.x + window.constants.mainPinParams.WIDTH > map.clientWidth) {
+        offset.x = map.clientWidth - window.constants.mainPinParams.WIDTH;
+      } else {
+        offset.x = moveEvt.clientX - dragoffset.x;
+      }
+
+      if (moveEvt.clientY - dragoffset.y < 0) {
+        offset.y = 0;
+      } else if (moveEvt.clientY - dragoffset.y + window.constants.mainPinParams.HEIGHT > map.clientHeight) {
+        offset.y = map.clientHeight - window.constants.mainPinParams.HEIGHT;
+      } else {
+        offset.y = moveEvt.clientY - dragoffset.y;
+      }
+
+      mainPin.style.top = offset.y + 'px';
+      mainPin.style.left = offset.x + 'px';
+      window.form.fillAddress(offset.x, offset.y);
     };
 
     var onMouseUp = function (upEvt) {
-      upEvt.preventDefault();
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
-      if (dragged) {
-        var onClickPreventDefault = function (preventEvt) {
-          preventEvt.preventDefault();
-          mainPin.removeEventListener('click', onClickPreventDefault);
-        };
-        mainPin.addEventListener('click', onClickPreventDefault);
-      }
       mainPin.removeEventListener('mousedown', enableMap);
     };
 

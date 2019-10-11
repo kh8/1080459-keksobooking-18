@@ -57,7 +57,7 @@
   };
 
   var onTypeChange = function () {
-    price.placeholder = window.constants.housingMinPrice[type.valu];
+    price.placeholder = window.constants.housingMinPrice[type.value];
   };
 
   var onCheckInChange = function (evt) {
@@ -80,11 +80,13 @@
 
   var disableForm = function () {
     form.classList.add('ad-form--disabled');
-    submitBtn.removeEventListener('click', validateForm);
-    window.utils.setElemsDisabled(fieldsets, true);
+    title.removeEventListener('keydown', onTitleKeydown);
     type.removeEventListener('change', onTypeChange);
+    price.removeEventListener('keydown', onPriceKeydown);
     checkIn.removeEventListener('change', onCheckInChange);
     checkOut.removeEventListener('change', onCheckOutChange);
+    submitBtn.removeEventListener('click', validateForm);
+    window.utils.setElemsDisabled(fieldsets, true);
   };
 
   var enableForm = function () {
