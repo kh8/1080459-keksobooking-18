@@ -6,9 +6,9 @@
   var filtersContainer = map.querySelector('.map__filters-container');
   var features = filtersContainer.querySelector('.map__features');
   var filters = filtersContainer.querySelectorAll('.map__filter');
-
   var similarListElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
+  var errorTemplate = document.querySelector('.error');
 
   var onMainPinClick = function () {
     enableMap();
@@ -65,6 +65,15 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
+  var onError = function (message) {
+    var error = errorTemplate.cloneNode(true);
+    error.textContent = message;
+    map.appendChild(error);
+  };
+  var onSuccess = function (data) {
+    similarListElement.appendChild(window.pin.makePinsFragment(data, map, filtersContainer));
+  };
+
   var enableMap = function () {
     map.classList.remove('map--faded');
     window.form.enable();
@@ -73,7 +82,7 @@
     window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
     features.disabled = true;
     window.utils.setElemsDisabled(filters, true);
-    similarListElement.appendChild(window.pin.makePinsFragment(window.data.generateAds(window.data.ADS_COUNT), map, filtersContainer));
+    window.server.load('https://js.dump.academy/keksobooking/data', onSuccess, onError);
   };
 
   var initMap = function () {
