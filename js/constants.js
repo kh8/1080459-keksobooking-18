@@ -34,7 +34,9 @@
   var formExtremums = {
     MIN_CAPACITY: 0,
     MAX_ROOMS: 100,
-    MAX_PRICE: 1000000
+    MAX_PRICE: 1000000,
+    MIN_TITLE_LENGTH: 30,
+    MAX_TITLE_LENGTH: 100
   };
 
   window.constants = {

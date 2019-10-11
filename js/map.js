@@ -10,14 +10,6 @@
   var similarListElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
 
-  var makePinsFragment = function (ads) {
-    var fragment = document.createDocumentFragment();
-    ads.forEach(function (element) {
-      fragment.appendChild(window.pin.make(element, map, filtersContainer));
-    });
-    return fragment;
-  };
-
   var onMainPinClick = function () {
     enableMap();
     mainPin.removeEventListener('click', onMainPinClick);
@@ -84,7 +76,7 @@
     window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
     features.disabled = true;
     window.utils.setElemsDisabled(filters, true);
-    similarListElement.appendChild(makePinsFragment(window.data.generateAds(window.data.ADS_COUNT)));
+    similarListElement.appendChild(window.pin.makePinsFragment(window.data.generateAds(window.data.ADS_COUNT), map, filtersContainer));
   };
 
   var initMap = function () {

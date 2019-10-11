@@ -13,7 +13,6 @@
   var checkIn = form.querySelector('#timein');
   var checkOut = form.querySelector('#timeout');
   var submitBtn = form.querySelector('.ad-form__submit');
-
   var checkRoomsGuestsValidity = function () {
     var places = +rooms.value;
     var guests = +capacity.value;
@@ -21,8 +20,10 @@
   };
 
   var setTitleValidity = function () {
-    if ((title.value.length < 30) || (title.value.length > 100)) {
-      var validityMessage = 'Длина заголовка должна быть от ' + '30' + ' до ' + '100' + ' символов';
+    var minTitleLength = window.constants.formExtremums.MIN_TITLE_LENGTH;
+    var maxTitleLength = window.constants.formExtremums.MAX_TITLE_LENGTH;
+    if ((title.value.length < minTitleLength) || (title.value.length > maxTitleLength)) {
+      var validityMessage = 'Длина заголовка должна быть от ' + minTitleLength + ' до ' + maxTitleLength + ' символов';
       title.setCustomValidity(validityMessage);
     } else {
       title.setCustomValidity('');
@@ -35,8 +36,10 @@
   };
 
   var setPriceValidity = function () {
-    if ((+price.value < price.min) || (+price.value > price.max)) {
-      var validityMessage = 'Цена за ночь должна быть в интервале от ' + price.min + ' до ' + price.max;
+    var minPrice = window.constants.housingMinPrice[type.value];
+    var maxPrice = window.constants.formExtremums.MAX_PRICE;
+    if ((+price.value < minPrice) || (+price.value > maxPrice)) {
+      var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до ' + maxPrice;
       price.setCustomValidity(validityMessage);
     } else {
       price.setCustomValidity('');
@@ -48,10 +51,13 @@
     title.setCustomValidity(validityMessage);
   };
 
+  var onPriceKeydown = function () {
+    var validityMessage = '';
+    price.setCustomValidity(validityMessage);
+  };
+
   var onTypeChange = function () {
-    var minPrice = window.constants.housingMinPrice[type.value];
-    price.min = minPrice;
-    price.placeholder = minPrice;
+    price.placeholder = window.constants.housingMinPrice[type.valu];
   };
 
   var onCheckInChange = function (evt) {
@@ -83,14 +89,13 @@
 
   var enableForm = function () {
     form.classList.remove('ad-form--disabled');
-    submitBtn.addEventListener('click', validateForm);
-    window.utils.setElemsDisabled(fieldsets, false);
     title.addEventListener('keydown', onTitleKeydown);
     type.addEventListener('change', onTypeChange);
+    price.addEventListener('keydown', onPriceKeydown);
     checkIn.addEventListener('change', onCheckInChange);
     checkOut.addEventListener('change', onCheckOutChange);
-    price.min = price.placeholder;
-    price.max = window.constants.formExtremums.MAX_PRICE;
+    submitBtn.addEventListener('click', validateForm);
+    window.utils.setElemsDisabled(fieldsets, false);
   };
 
   window.form = {
