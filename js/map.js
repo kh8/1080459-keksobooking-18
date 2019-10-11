@@ -55,7 +55,7 @@
       window.form.fillAddress(offset.x, offset.y);
     };
 
-    var onMouseUp = function (upEvt) {
+    var onMouseUp = function () {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
       mainPin.removeEventListener('mousedown', enableMap);
