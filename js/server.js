@@ -28,8 +28,21 @@
     xhr.send();
   };
 
+  var uploadAds = function (url, data, onSuccess) {
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+
+    xhr.addEventListener('load', function () {
+      onSuccess(xhr.response);
+    });
+
+    xhr.open('POST', url);
+    xhr.send(data);
+  };
+
   window.server = {
-    load: loadAds
+    load: loadAds,
+    upload: uploadAds
   };
 
 })();

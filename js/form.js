@@ -13,6 +13,8 @@
   var checkIn = form.querySelector('#timein');
   var checkOut = form.querySelector('#timeout');
   var submitBtn = form.querySelector('.ad-form__submit');
+  var successTemplate = document.querySelector('#success ').content.querySelector('.success');
+
   var checkRoomsGuestsValidity = function () {
     var places = +rooms.value;
     var guests = +capacity.value;
@@ -89,14 +91,43 @@
     window.utils.setElemsDisabled(fieldsets, true);
   };
 
-  var enableForm = function () {
+  var enableForm = function (successSubmitContainer) {
+
+    var onSubmitBtnClick = function () {
+      validateForm();
+      window.server.upload('https://js.dump.academy/keksobooking', new FormData(form), onSuccess);
+    };
+
+    var onSuccess = function () {
+      var success = successTemplate.cloneNode(true);
+
+      var onSuccessMessageClick = function () {
+        successSubmitContainer.removeChild(success);
+        document.removeEventListener('click', onSuccessMessageClick);
+      };
+
+      var onSuccessMessageEsc = function (evt) {
+        if (evt.keyCode === window.constants.keycodes.ESC_KEYCODE) {
+          successSubmitContainer.removeChild(success);
+          document.removeEventListener('click', onSuccessMessageEsc);
+        }
+      };
+
+      successSubmitContainer.appendChild(success);
+      document.addEventListener('click', onSuccessMessageClick);
+      document.addEventListener('click', onSuccessMessageEsc);
+    };
+
     form.classList.remove('ad-form--disabled');
     title.addEventListener('keydown', onTitleKeydown);
     type.addEventListener('change', onTypeChange);
     price.addEventListener('keydown', onPriceKeydown);
     checkIn.addEventListener('change', onCheckInChange);
     checkOut.addEventListener('change', onCheckOutChange);
-    submitBtn.addEventListener('click', validateForm);
+    submitBtn.addEventListener('click', onSubmitBtnClick);
+    form.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+    });
     window.utils.setElemsDisabled(fieldsets, false);
   };
 

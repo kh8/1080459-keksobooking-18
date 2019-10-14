@@ -22,7 +22,6 @@
     }
   };
 
-
   var onMainPinMouseDown = function (evt) {
     var dragoffset = {
       x: evt.clientX - mainPin.offsetLeft,
@@ -70,7 +69,7 @@
     var errorMessage = error.querySelector('.error__message');
     var errorButton = error.querySelector('.error__button');
     errorButton.addEventListener('click', function () {
-      error.remove(error);
+      error.removeChild(error);
       window.server.load('https://js.dump.academy/keksobooking/data', onSuccess, onError);
     });
     errorMessage.textContent = message;
@@ -83,7 +82,7 @@
 
   var enableMap = function () {
     map.classList.remove('map--faded');
-    window.form.enable();
+    window.form.enable(map);
     mainPin.removeEventListener('keydown', onMainPinEnterKeydown);
     mainPin.removeEventListener('click', enableMap);
     window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
