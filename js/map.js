@@ -8,7 +8,7 @@
   var filters = filtersContainer.querySelectorAll('.map__filter');
   var similarListElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
-  var errorTemplate = document.querySelector('.error');
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
 
   var onMainPinClick = function () {
     enableMap();
@@ -67,9 +67,16 @@
 
   var onError = function (message) {
     var error = errorTemplate.cloneNode(true);
-    error.textContent = message;
-    map.appendChild(error);
+    var errorMessage = error.querySelector('.error__message');
+    var errorButton = error.querySelector('.error__button');
+    errorButton.addEventListener('click', function () {
+      error.remove(error);
+      window.server.load('https://js.dump.academy/keksobooking/data', onSuccess, onError);
+    });
+    errorMessage.textContent = message;
+    map.insertBefore(error, filtersContainer);
   };
+
   var onSuccess = function (data) {
     similarListElement.appendChild(window.pin.makePinsFragment(data, map, filtersContainer));
   };
