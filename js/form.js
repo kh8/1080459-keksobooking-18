@@ -14,6 +14,7 @@
   var checkOut = form.querySelector('#timeout');
   var submitBtn = form.querySelector('.ad-form__submit');
   var successTemplate = document.querySelector('#success ').content.querySelector('.success');
+  var uploadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
 
   var checkRoomsGuestsValidity = function () {
     var places = +rooms.value;
@@ -95,10 +96,9 @@
 
     var onSubmitBtnClick = function () {
       validateForm();
-      window.server.upload('https://js.dump.academy/keksobooking', new FormData(form), onSuccess);
     };
 
-    var onSuccess = function () {
+    var onUploadSuccess = function () {
       var success = successTemplate.cloneNode(true);
 
       var onSuccessMessageClick = function () {
@@ -118,6 +118,19 @@
       document.addEventListener('click', onSuccessMessageEsc);
     };
 
+    var onUploadError = function (message) {
+      var error = uploadErrorTemplate.cloneNode(true);
+      var errorMessage = error.querySelector('.error__message');
+      var errorButton = error.querySelector('.error__button');
+      errorButton.addEventListener('click', function (evt) {
+        evt.preventDefault();
+        error.removeChild(error);
+        window.server.uploadAd(window.constants.UPLOAD_URL, new FormData(form), onUploadSuccess, onUploadError);
+      });
+      errorMessage.textContent = message;
+      successSubmitContainer.appendChild(error);
+    };
+
     form.classList.remove('ad-form--disabled');
     title.addEventListener('keydown', onTitleKeydown);
     type.addEventListener('change', onTypeChange);
@@ -127,6 +140,7 @@
     submitBtn.addEventListener('click', onSubmitBtnClick);
     form.addEventListener('submit', function (evt) {
       evt.preventDefault();
+      window.server.uploadAd(window.constants.UPLOAD_URL, new FormData(form), onUploadSuccess, onUploadError);
     });
     window.utils.setElemsDisabled(fieldsets, false);
   };

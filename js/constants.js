@@ -39,13 +39,20 @@
     MAX_TITLE_LENGTH: 100
   };
 
+  var UPLOAD_URL = 'https://js.dump.academy/keksobooking';
+  var LOAD_URL = 'https://js.dump.academy/keksobooking/data';
+  var LOAD_TIMEOUT = 10000;
+
   window.constants = {
     keycodes: keycodes,
     mainPinParams: mainPinParams,
     pinParams: pinParams,
     translateOfferType: translateOfferType,
     housingMinPrice: housingMinPrice,
-    formExtremums: formExtremums
+    formExtremums: formExtremums,
+    UPLOAD_URL: UPLOAD_URL,
+    LOAD_URL: LOAD_URL,
+    LOAD_TIMEOUT: LOAD_TIMEOUT,
   };
 
 })();

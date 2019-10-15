@@ -8,7 +8,7 @@
   var filters = filtersContainer.querySelectorAll('.map__filter');
   var similarListElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
-  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var loadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
 
   var onMainPinClick = function () {
     enableMap();
@@ -64,19 +64,20 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  var onError = function (message) {
-    var error = errorTemplate.cloneNode(true);
+  var onLoadError = function (message) {
+    var error = loadErrorTemplate.cloneNode(true);
     var errorMessage = error.querySelector('.error__message');
     var errorButton = error.querySelector('.error__button');
-    errorButton.addEventListener('click', function () {
+    errorButton.addEventListener('click', function (evt) {
+      evt.preventDefault();
       error.removeChild(error);
-      window.server.load('https://js.dump.academy/keksobooking/data', onSuccess, onError);
+      window.server.loadAds(window.constants.LOAD_URL, onLoadSuccess, onLoadError);
     });
     errorMessage.textContent = message;
     map.insertBefore(error, filtersContainer);
   };
 
-  var onSuccess = function (data) {
+  var onLoadSuccess = function (data) {
     similarListElement.appendChild(window.pin.makePinsFragment(data, map, filtersContainer));
   };
 
@@ -88,7 +89,7 @@
     window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
     features.disabled = true;
     window.utils.setElemsDisabled(filters, true);
-    window.server.load('https://js.dump.academy/keksobooking/data', onSuccess, onError);
+    window.server.loadAds(window.constants.LOAD_URL, onLoadSuccess, onLoadError);
   };
 
   var initMap = function () {
