@@ -6,7 +6,7 @@
   var filtersContainer = map.querySelector('.map__filters-container');
   var features = filtersContainer.querySelector('.map__features');
   var filters = filtersContainer.querySelectorAll('.map__filter');
-  var similarListElement = document.querySelector('.map__pins');
+  var pinsContainer = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var loadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
 
@@ -71,29 +71,36 @@
     errorButton.addEventListener('click', function (evt) {
       evt.preventDefault();
       error.removeChild(error);
-      window.server.loadAds(window.constants.LOAD_URL, onLoadSuccess, onLoadError);
+      window.server.loadAds(window.constants.serverParams.LOAD_URL, onLoadSuccess, onLoadError);
     });
     errorMessage.textContent = message;
     map.insertBefore(error, filtersContainer);
   };
 
   var onLoadSuccess = function (data) {
-    similarListElement.appendChild(window.pin.makePinsFragment(data, map, filtersContainer));
+    pinsContainer.appendChild(window.pin.makePinsFragment(data, map, filtersContainer));
   };
 
   var enableMap = function () {
     map.classList.remove('map--faded');
     window.form.enable(map);
-    mainPin.removeEventListener('keydown', onMainPinEnterKeydown);
-    mainPin.removeEventListener('click', enableMap);
-    window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
     features.disabled = true;
     window.utils.setElemsDisabled(filters, true);
-    window.server.loadAds(window.constants.LOAD_URL, onLoadSuccess, onLoadError);
+    window.server.loadAds(window.constants.serverParams.LOAD_URL, onLoadSuccess, onLoadError);
   };
 
   var initMap = function () {
+    map.classList.add('map--faded');
+    var mapPins = map.querySelectorAll('.map__pin:not(.map__pin--main)');
+    if (mapPins) {
+      mapPins.forEach(function (element) {
+        pinsContainer.removeChild(element);
+      });
+    }
+    mainPin.style.left = window.constants.mainPinParams.START_X + 'px';
+    mainPin.style.top = window.constants.mainPinParams.START_Y + 'px';
     window.form.disable();
+    window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
     window.utils.setElemsDisabled(filters, false);
     features.disabled = false;
     mainPin.addEventListener('click', onMainPinClick);
@@ -102,5 +109,9 @@
   };
 
   initMap();
+
+  window.map = {
+    init: initMap
+  };
 
 })();

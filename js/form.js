@@ -16,37 +16,49 @@
   var successTemplate = document.querySelector('#success ').content.querySelector('.success');
   var uploadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
 
-  var checkRoomsGuestsValidity = function () {
-    var places = +rooms.value;
-    var guests = +capacity.value;
-    return (guests > places) || ((guests === window.constants.formExtremums.MIN_CAPACITY) !== (places === window.constants.formExtremums.MAX_ROOMS));
-  };
+  var minTitleLength = window.constants.formExtremums.MIN_TITLE_LENGTH;
+  var maxTitleLength = window.constants.formExtremums.MAX_TITLE_LENGTH;
+  var titleInvalidMessage = 'Длина заголовка должна быть от ' + minTitleLength + ' до ' + maxTitleLength + ' символов';
+  var capacityInvalidMessage = 'Некорректное число гостей';
 
   var setTitleValidity = function () {
-    var minTitleLength = window.constants.formExtremums.MIN_TITLE_LENGTH;
-    var maxTitleLength = window.constants.formExtremums.MAX_TITLE_LENGTH;
-    if ((title.value.length < minTitleLength) || (title.value.length > maxTitleLength)) {
-      var validityMessage = 'Длина заголовка должна быть от ' + minTitleLength + ' до ' + maxTitleLength + ' символов';
-      title.setCustomValidity(validityMessage);
+    var titleValidity = (title.value.length < minTitleLength) || (title.value.length > maxTitleLength);
+    if (titleValidity) {
+      title.setCustomValidity(titleInvalidMessage);
     } else {
       title.setCustomValidity('');
     }
+    return titleValidity;
   };
 
   var setCapacityValidity = function () {
-    var validityMessage = checkRoomsGuestsValidity() ? 'Некорректное число гостей' : '';
-    capacity.setCustomValidity(validityMessage);
+    var places = +rooms.value;
+    var guests = +capacity.value;
+    var capacityValidity = (guests > places) || ((guests === window.constants.formExtremums.MIN_CAPACITY) !== (places === window.constants.formExtremums.MAX_ROOMS));
+    if (capacityValidity) {
+      capacity.setCustomValidity(capacityInvalidMessage);
+    } else {
+      capacity.setCustomValidity('');
+    }
+    return capacityValidity;
   };
 
   var setPriceValidity = function () {
     var minPrice = window.constants.housingMinPrice[type.value];
     var maxPrice = window.constants.formExtremums.MAX_PRICE;
-    if ((+price.value < minPrice) || (+price.value > maxPrice)) {
-      var validityMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до ' + maxPrice;
-      price.setCustomValidity(validityMessage);
+    var priceValidity = (+price.value < minPrice) || (+price.value > maxPrice);
+    if (priceValidity) {
+      var priceInvalidMessage = 'Цена за ночь должна быть в интервале от ' + minPrice + ' до ' + maxPrice;
+      price.setCustomValidity(priceInvalidMessage);
     } else {
       price.setCustomValidity('');
     }
+    return priceValidity;
+  };
+
+  var validateForm = function () {
+    var isValid = (!setTitleValidity()) && (!setPriceValidity()) && (!setCapacityValidity());
+    return isValid;
   };
 
   var onTitleKeydown = function () {
@@ -71,12 +83,6 @@
     checkIn.value = evt.currentTarget.value;
   };
 
-  var validateForm = function () {
-    setTitleValidity();
-    setPriceValidity();
-    setCapacityValidity();
-  };
-
   var fillAddress = function (pinX, pinY) {
     address.value = Math.floor(pinX + window.constants.mainPinParams.WIDTH / 2) + ', ' + Math.floor(pinY + window.constants.mainPinParams.HEIGHT);
   };
@@ -90,13 +96,11 @@
     checkOut.removeEventListener('change', onCheckOutChange);
     submitBtn.removeEventListener('click', validateForm);
     window.utils.setElemsDisabled(fieldsets, true);
+    title.value = '';
+    price.value = '';
   };
 
   var enableForm = function (successSubmitContainer) {
-
-    var onSubmitBtnClick = function () {
-      validateForm();
-    };
 
     var onUploadSuccess = function () {
       var success = successTemplate.cloneNode(true);
@@ -125,7 +129,7 @@
       errorButton.addEventListener('click', function (evt) {
         evt.preventDefault();
         error.removeChild(error);
-        window.server.uploadAd(window.constants.UPLOAD_URL, new FormData(form), onUploadSuccess, onUploadError);
+        window.server.uploadAd(window.constants.serverParams.UPLOAD_URL, new FormData(form), onUploadSuccess, onUploadError);
       });
       errorMessage.textContent = message;
       successSubmitContainer.appendChild(error);
@@ -137,10 +141,13 @@
     price.addEventListener('keydown', onPriceKeydown);
     checkIn.addEventListener('change', onCheckInChange);
     checkOut.addEventListener('change', onCheckOutChange);
-    submitBtn.addEventListener('click', onSubmitBtnClick);
     form.addEventListener('submit', function (evt) {
       evt.preventDefault();
-      window.server.uploadAd(window.constants.UPLOAD_URL, new FormData(form), onUploadSuccess, onUploadError);
+      var flag = validateForm();
+      if (flag) {
+        window.server.uploadAd(window.constants.serverParams.UPLOAD_URL, new FormData(form), onUploadSuccess, onUploadError);
+        window.map.init();
+      }
     });
     window.utils.setElemsDisabled(fieldsets, false);
   };
