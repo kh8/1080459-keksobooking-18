@@ -40,7 +40,7 @@
 
   window.pin = {
     make: makePin,
-    makePinsFragment: makePinsFragment
+    makePinsFragment: makePinsFragment,
   };
 
 })();

@@ -5,6 +5,8 @@
   var mainPinParams = {
     WIDTH: 65,
     HEIGHT: 87,
+    START_X: 570,
+    START_Y: 385
   };
 
   var pinParams = {
@@ -39,13 +41,21 @@
     MAX_TITLE_LENGTH: 100
   };
 
+  var serverParams = {
+    UPLOAD_URL: 'https://js.dump.academy/keksobooking',
+    LOAD_URL: 'https://js.dump.academy/keksobooking/data',
+    LOAD_TIMEOUT: 10000
+  };
+
+
   window.constants = {
     keycodes: keycodes,
     mainPinParams: mainPinParams,
     pinParams: pinParams,
     translateOfferType: translateOfferType,
     housingMinPrice: housingMinPrice,
-    formExtremums: formExtremums
+    formExtremums: formExtremums,
+    serverParams: serverParams
   };
 
 })();
