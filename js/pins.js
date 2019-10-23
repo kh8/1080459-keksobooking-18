@@ -38,7 +38,7 @@
     return fragment;
   };
 
-  window.pin = {
+  window.pins = {
     renderFragment: renderPinsFragment
   };
 

@@ -10,8 +10,6 @@
   var pinsContainer = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var loadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
-  var ads = {};
-  var filteredAds = {};
 
   var onMainPinClick = function () {
     enableMap();
@@ -88,48 +86,44 @@
     mainPin.addEventListener('mousedown', onMainPinMouseDown);
   };
 
-  var renderPins = function (data) {
-    var slicedData = data.slice(0, window.constants.MAX_PINS);
+  var clearPinsContainer = function () {
     var mapPins = map.querySelectorAll('.map__pin:not(.map__pin--main)');
     if (mapPins) {
       mapPins.forEach(function (element) {
         pinsContainer.removeChild(element);
       });
     }
-    pinsContainer.appendChild(window.pin.renderFragment(slicedData, map, filtersContainer));
   };
 
-  var onTypeFilterChange = function () {
-    filteredAds = ads.filter(function (ad) {
+  var onTypeFilterChange = function (ads) {
+    var filteredAds = ads.filter(function (ad) {
       return (typeFilter.value === 'any') ? true : (typeFilter.value === ad.offer.type);
     });
-    renderPins(filteredAds);
+    clearPinsContainer();
+    pinsContainer.appendChild(window.pins.renderFragment(filteredAds.slice(0, window.constants.MAX_PINS), map, filtersContainer));
   };
 
-  var enableFilters = function () {
-    typeFilter.addEventListener('change', onTypeFilterChange);
+  var enableFilters = function (ads) {
+    typeFilter.addEventListener('change', function () {
+      onTypeFilterChange(ads);
+    });
   };
 
   var onLoadSuccess = function (data) {
-    ads = data;
-    renderPins(data);
+    enableFilters(data);
+    clearPinsContainer();
+    pinsContainer.appendChild(window.pins.renderFragment(data.slice(0, window.constants.MAX_PINS), map, filtersContainer));
   };
 
   var enableMap = function () {
     map.classList.remove('map--faded');
     window.form.enable(map);
-    enableFilters();
     window.server.loadAds(window.constants.serverParams.LOAD_URL, onLoadSuccess, onLoadError);
   };
 
   var initMap = function () {
     map.classList.add('map--faded');
-    var mapPins = map.querySelectorAll('.map__pin:not(.map__pin--main)');
-    if (mapPins) {
-      mapPins.forEach(function (element) {
-        pinsContainer.removeChild(element);
-      });
-    }
+    clearPinsContainer();
     initMainPin();
     window.form.disable();
     window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
