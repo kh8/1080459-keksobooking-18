@@ -88,17 +88,22 @@
     mainPin.addEventListener('mousedown', onMainPinMouseDown);
   };
 
-  var onTypeFilterChange = function () {
-    filteredAds = ads.filter(function (ad) {
-      return (typeFilter.value === 'any') ? true : (typeFilter.value === ad.offer.type);
-    });
+  var renderPins = function (data) {
+    var slicedData = data.slice(0, window.constants.MAX_PINS);
     var mapPins = map.querySelectorAll('.map__pin:not(.map__pin--main)');
     if (mapPins) {
       mapPins.forEach(function (element) {
         pinsContainer.removeChild(element);
       });
     }
-    pinsContainer.appendChild(window.pin.renderFragment(filteredAds, map, filtersContainer));
+    pinsContainer.appendChild(window.pin.renderFragment(slicedData, map, filtersContainer));
+  };
+
+  var onTypeFilterChange = function () {
+    filteredAds = ads.filter(function (ad) {
+      return (typeFilter.value === 'any') ? true : (typeFilter.value === ad.offer.type);
+    });
+    renderPins(filteredAds);
   };
 
   var enableFilters = function () {
@@ -107,8 +112,7 @@
 
   var onLoadSuccess = function (data) {
     ads = data;
-    var slicedData = data.slice(0, window.constants.MAX_PINS);
-    pinsContainer.appendChild(window.pin.renderFragment(slicedData, map, filtersContainer));
+    renderPins(data);
   };
 
   var enableMap = function () {
