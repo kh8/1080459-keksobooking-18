@@ -6,9 +6,12 @@
   var filtersContainer = map.querySelector('.map__filters-container');
   var features = filtersContainer.querySelector('.map__features');
   var filters = filtersContainer.querySelectorAll('.map__filter');
+  var typeFilter = filters.querySelector('#housing-type');
   var pinsContainer = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var loadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var ads = {};
+  var filteredAds = {};
 
   var onMainPinClick = function () {
     enableMap();
@@ -77,10 +80,6 @@
     map.insertBefore(error, filtersContainer);
   };
 
-  var onLoadSuccess = function (data) {
-    pinsContainer.appendChild(window.pin.makePinsFragment(data, map, filtersContainer));
-  };
-
   var initMainPin = function () {
     mainPin.style.left = window.constants.mainPinParams.START_X + 'px';
     mainPin.style.top = window.constants.mainPinParams.START_Y + 'px';
@@ -89,11 +88,26 @@
     mainPin.addEventListener('mousedown', onMainPinMouseDown);
   };
 
+  var onTypeFilterChange = function () {
+    filteredAds = ads.filter(function (ad) {
+      return typeFilter === ad.offer.type;
+    });
+    pinsContainer.appendChild(window.pin.renderFragment(filteredAds, map, filtersContainer));
+  };
+
+  var enableFilters = function () {
+    typeFilter.addEventListener('change', onTypeFilterChange);
+  };
+
+  var onLoadSuccess = function (data) {
+    var slicedData = data.slice(0, window.constants.MAX_PINS);
+    pinsContainer.appendChild(window.pin.renderFragment(slicedData, map, filtersContainer));
+  };
+
   var enableMap = function () {
     map.classList.remove('map--faded');
     window.form.enable(map);
-    features.disabled = true;
-    window.utils.setElemsDisabled(filters, true);
+    enableFilters();
     window.server.loadAds(window.constants.serverParams.LOAD_URL, onLoadSuccess, onLoadError);
   };
 
