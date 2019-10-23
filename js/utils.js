@@ -28,13 +28,21 @@
     }
     return array;
   };
+  var removeChilds = function (node) {
+    if (node) {
+      node.forEach(function (element) {
+        node.removeChild(element);
+      });
+    }
+  };
 
   window.utils = {
     setElemsDisabled: setElemsDisabled,
     getCeilRandom: getCeilRandom,
     getCeilRandomFromInterval: getCeilRandomFromInterval,
     getRandomElementFromArray: getRandomElementFromArray,
-    shuffleArray: shuffleArray
+    shuffleArray: shuffleArray,
+    removeChilds: removeChilds
   };
 
 })();

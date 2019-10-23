@@ -6,7 +6,7 @@
   var filtersContainer = map.querySelector('.map__filters-container');
   var features = filtersContainer.querySelector('.map__features');
   var filters = filtersContainer.querySelectorAll('.map__filter');
-  var typeFilter = filters.querySelector('#housing-type');
+  var typeFilter = filtersContainer.querySelector('#housing-type');
   var pinsContainer = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var loadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
@@ -90,8 +90,14 @@
 
   var onTypeFilterChange = function () {
     filteredAds = ads.filter(function (ad) {
-      return typeFilter === ad.offer.type;
+      return (typeFilter.value === 'any') ? true : (typeFilter.value === ad.offer.type);
     });
+    var mapPins = map.querySelectorAll('.map__pin:not(.map__pin--main)');
+    if (mapPins) {
+      mapPins.forEach(function (element) {
+        pinsContainer.removeChild(element);
+      });
+    }
     pinsContainer.appendChild(window.pin.renderFragment(filteredAds, map, filtersContainer));
   };
 
@@ -100,6 +106,7 @@
   };
 
   var onLoadSuccess = function (data) {
+    ads = data;
     var slicedData = data.slice(0, window.constants.MAX_PINS);
     pinsContainer.appendChild(window.pin.renderFragment(slicedData, map, filtersContainer));
   };
