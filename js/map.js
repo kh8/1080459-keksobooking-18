@@ -99,16 +99,19 @@
     pinsContainer.appendChild(window.pins.renderFragment(ads.slice(0, window.constants.MAX_PINS), map, filtersContainer));
   };
 
-  var onTypeFilterChange = function (ads) {
-    var filteredAds = ads.filter(function (ad) {
+  var filterByType = function (ads) {
+    return ads.filter(function (ad) {
       if (typeFilter.value === 'any') {
         return true;
       } else {
         return (typeFilter.value === ad.offer.type);
       }
     });
+  };
+
+  var onTypeFilterChange = function (ads) {
     clearPinsContainer();
-    fillPinsContainer(filteredAds);
+    fillPinsContainer(filterByType(ads));
   };
 
   var enableFilters = function (ads) {
