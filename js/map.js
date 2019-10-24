@@ -95,12 +95,20 @@
     }
   };
 
+  var fillPinsContainer = function (ads) {
+    pinsContainer.appendChild(window.pins.renderFragment(ads.slice(0, window.constants.MAX_PINS), map, filtersContainer));
+  };
+
   var onTypeFilterChange = function (ads) {
     var filteredAds = ads.filter(function (ad) {
-      return (typeFilter.value === 'any') ? true : (typeFilter.value === ad.offer.type);
+      if (typeFilter.value === 'any') {
+        return true;
+      } else {
+        return (typeFilter.value === ad.offer.type);
+      }
     });
     clearPinsContainer();
-    pinsContainer.appendChild(window.pins.renderFragment(filteredAds.slice(0, window.constants.MAX_PINS), map, filtersContainer));
+    fillPinsContainer(filteredAds);
   };
 
   var enableFilters = function (ads) {
@@ -112,7 +120,7 @@
   var onLoadSuccess = function (data) {
     enableFilters(data);
     clearPinsContainer();
-    pinsContainer.appendChild(window.pins.renderFragment(data.slice(0, window.constants.MAX_PINS), map, filtersContainer));
+    fillPinsContainer(data);
   };
 
   var enableMap = function () {
