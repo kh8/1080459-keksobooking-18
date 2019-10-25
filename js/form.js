@@ -57,8 +57,7 @@
   };
 
   var validateForm = function () {
-    var isValid = (!setTitleValidity()) && (!setPriceValidity()) && (!setCapacityValidity());
-    return isValid;
+    return (!setTitleValidity()) && (!setPriceValidity()) && (!setCapacityValidity());
   };
 
   var onTitleKeydown = function () {
@@ -143,8 +142,7 @@
     checkOut.addEventListener('change', onCheckOutChange);
     form.addEventListener('submit', function (evt) {
       evt.preventDefault();
-      var flag = validateForm();
-      if (flag) {
+      if (validateForm()) {
         window.server.uploadAd(window.constants.serverParams.UPLOAD_URL, new FormData(form), onUploadSuccess, onUploadError);
         window.map.init();
       }

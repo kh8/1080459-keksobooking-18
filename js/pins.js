@@ -30,7 +30,7 @@
     return pin;
   };
 
-  var makePinsFragment = function (ads, container, beforeContainer) {
+  var renderPinsFragment = function (ads, container, beforeContainer) {
     var fragment = document.createDocumentFragment();
     ads.forEach(function (element) {
       fragment.appendChild(makePin(element, container, beforeContainer));
@@ -38,9 +38,8 @@
     return fragment;
   };
 
-  window.pin = {
-    make: makePin,
-    makePinsFragment: makePinsFragment,
+  window.pins = {
+    renderFragment: renderPinsFragment
   };
 
 })();

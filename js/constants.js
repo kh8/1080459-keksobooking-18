@@ -14,6 +14,8 @@
     HEIGHT: 40
   };
 
+  var MAX_PINS = 5;
+
   var keycodes = {
     ENTER_KEYCODE: 13,
     ESC_KEYCODE: 27
@@ -47,11 +49,11 @@
     LOAD_TIMEOUT: 10000
   };
 
-
   window.constants = {
     keycodes: keycodes,
     mainPinParams: mainPinParams,
     pinParams: pinParams,
+    MAX_PINS: MAX_PINS,
     translateOfferType: translateOfferType,
     housingMinPrice: housingMinPrice,
     formExtremums: formExtremums,
