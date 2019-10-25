@@ -7,6 +7,15 @@
   var features = filtersContainer.querySelector('.map__features');
   var filters = filtersContainer.querySelectorAll('.map__filter');
   var typeFilter = filtersContainer.querySelector('#housing-type');
+  var priceFilter = filtersContainer.querySelector('#housing-price');
+  var roomsFilter = filtersContainer.querySelector('#housing-rooms');
+  var guestsFilter = filtersContainer.querySelector('#housing-guests');
+  var wifiFilter = filtersContainer.querySelector('#filter-wifi');
+  var dishwasherFilter = filtersContainer.querySelector('#filter-dishwasher');
+  var parkingFilter = filtersContainer.querySelector('#filter-parking');
+  var washerFilter = filtersContainer.querySelector('#filter-washer');
+  var elevatorFilter = filtersContainer.querySelector('#filter-elevator');
+  var conditionerFilter = filtersContainer.querySelector('#filter-conditioner');
   var pinsContainer = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var loadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
@@ -105,15 +114,153 @@
     });
   };
 
-
-  var onTypeFilterChange = function (ads) {
-    clearPinsContainer();
-    fillPinsContainer(filterByType(ads));
+  var filterByPrice = function (ads) {
+    return priceFilter.value === 'any' ? ads : ads.filter(function (ad) {
+      switch (priceFilter.value) {
+        case 'low':
+          return ad.offer.price < window.constants.filterOptions.LOW_PRICE;
+        case 'high':
+          return ad.offer.price >= window.constants.filterOptions.HIGH_PRICE;
+        case 'middle':
+          return (ad.offer.price >= window.constants.filterOptions.LOW_PRICE) && (ad.offer.price <= window.constants.filterOptions.HIGH_PRICE);
+        default:
+          return true;
+      }
+    });
   };
+
+  var filterByRooms = function (ads) {
+    return roomsFilter.value === 'any' ? ads : ads.filter(function (ad) {
+      return roomsFilter.value === ad.offer.rooms + '';
+    });
+  };
+
+  var filterByGuests = function (ads) {
+    return guestsFilter.value === 'any' ? ads : ads.filter(function (ad) {
+      return guestsFilter.value === ad.offer.guests + '';
+    });
+  };
+
+  var filterByWifi = function (ads) {
+    return wifiFilter.checked === false ? ads : ads.filter(function (ad) {
+      return ad.offer.features.indexOf('wifi') !== -1;
+    });
+  };
+
+  var filterByDishwasher = function (ads) {
+    return dishwasherFilter.checked === false ? ads : ads.filter(function (ad) {
+      return ad.offer.features.indexOf('dishwasher') !== -1;
+    });
+  };
+
+  var filterByParking = function (ads) {
+    return parkingFilter.checked === false ? ads : ads.filter(function (ad) {
+      return ad.offer.features.indexOf('parking') !== -1;
+    });
+  };
+
+  var filterByWasher = function (ads) {
+    return washerFilter.checked === false ? ads : ads.filter(function (ad) {
+      return ad.offer.features.indexOf('washer') !== -1;
+    });
+  };
+
+  var filterByElevator = function (ads) {
+    return elevatorFilter.checked === false ? ads : ads.filter(function (ad) {
+      return ad.offer.features.indexOf('elevator') !== -1;
+    });
+  };
+
+  var filterByConditioner = function (ads) {
+    return conditionerFilter.checked === false ? ads : ads.filter(function (ad) {
+      return ad.offer.features.indexOf('conditioner') !== -1;
+    });
+  };
+
+  var filterByAll = function (ads) {
+    return filterByType(filterByPrice(filterByRooms(filterByGuests(filterByWifi(filterByDishwasher(filterByParking(filterByWasher(filterByElevator(filterByConditioner(ads))))))))));
+  };
+
+  var onTypeFilterChange = window.utils.debounce(function (ads) {
+    clearPinsContainer();
+    fillPinsContainer(filterByAll(ads));
+  });
+
+  var onPriceFilterChange = window.utils.debounce(function (ads) {
+    clearPinsContainer();
+    fillPinsContainer(filterByAll(ads));
+  });
+
+  var onRoomsFilterChange = window.utils.debounce(function (ads) {
+    clearPinsContainer();
+    fillPinsContainer(filterByAll(ads));
+  });
+
+  var onGuestsFilterChange = window.utils.debounce(function (ads) {
+    clearPinsContainer();
+    fillPinsContainer(filterByAll(ads));
+  });
+
+  var onWifiFilterChange = window.utils.debounce(function (ads) {
+    clearPinsContainer();
+    fillPinsContainer(filterByAll(ads));
+  });
+
+  var onDishwasherFilterChange = window.utils.debounce(function (ads) {
+    clearPinsContainer();
+    fillPinsContainer(filterByAll(ads));
+  });
+
+  var onParkingFilterChange = window.utils.debounce(function (ads) {
+    clearPinsContainer();
+    fillPinsContainer(filterByAll(ads));
+  });
+
+  var onWasherFilterChange = window.utils.debounce(function (ads) {
+    clearPinsContainer();
+    fillPinsContainer(filterByAll(ads));
+  });
+
+  var onElevatorFilterChange = window.utils.debounce(function (ads) {
+    clearPinsContainer();
+    fillPinsContainer(filterByAll(ads));
+  });
+
+  var onConditionerFilterChange = window.utils.debounce(function (ads) {
+    clearPinsContainer();
+    fillPinsContainer(filterByAll(ads));
+  });
 
   var enableFilters = function (ads) {
     typeFilter.addEventListener('change', function () {
       onTypeFilterChange(ads);
+    });
+    priceFilter.addEventListener('change', function () {
+      onPriceFilterChange(ads);
+    });
+    roomsFilter.addEventListener('change', function () {
+      onRoomsFilterChange(ads);
+    });
+    guestsFilter.addEventListener('change', function () {
+      onGuestsFilterChange(ads);
+    });
+    wifiFilter.addEventListener('change', function () {
+      onWifiFilterChange(ads);
+    });
+    dishwasherFilter.addEventListener('change', function () {
+      onDishwasherFilterChange(ads);
+    });
+    parkingFilter.addEventListener('change', function () {
+      onParkingFilterChange(ads);
+    });
+    washerFilter.addEventListener('change', function () {
+      onWasherFilterChange(ads);
+    });
+    elevatorFilter.addEventListener('change', function () {
+      onElevatorFilterChange(ads);
+    });
+    conditionerFilter.addEventListener('change', function () {
+      onConditionerFilterChange(ads);
     });
   };
 
