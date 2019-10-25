@@ -100,14 +100,11 @@
   };
 
   var filterByType = function (ads) {
-    if (typeFilter.value === 'any') {
-      return ads;
-    } else {
-      return ads.filter(function (ad) {
-        return typeFilter.value === ad.offer.type;
-      });
-    }
+    return typeFilter.value === 'any' ? ads : ads.filter(function (ad) {
+      return typeFilter.value === ad.offer.type;
+    });
   };
+
 
   var onTypeFilterChange = function (ads) {
     clearPinsContainer();
