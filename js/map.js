@@ -100,13 +100,13 @@
   };
 
   var filterByType = function (ads) {
-    return ads.filter(function (ad) {
-      if (typeFilter.value === 'any') {
-        return true;
-      } else {
-        return (typeFilter.value === ad.offer.type);
-      }
-    });
+    if (typeFilter.value === 'any') {
+      return ads;
+    } else {
+      return ads.filter(function (ad) {
+        return typeFilter.value === ad.offer.type;
+      });
+    }
   };
 
   var onTypeFilterChange = function (ads) {
