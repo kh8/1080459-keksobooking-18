@@ -6,6 +6,7 @@
   var filtersContainer = map.querySelector('.map__filters-container');
   var features = filtersContainer.querySelector('.map__features');
   var filters = filtersContainer.querySelectorAll('.map__filter');
+  var checkboxes = filtersContainer.querySelectorAll('.map__checkbox');
   var typeFilter = filtersContainer.querySelector('#housing-type');
   var priceFilter = filtersContainer.querySelector('#housing-price');
   var roomsFilter = filtersContainer.querySelector('#housing-rooms');
@@ -178,89 +179,35 @@
   };
 
   var filterByAll = function (ads) {
-    return filterByType(filterByPrice(filterByRooms(filterByGuests(filterByWifi(filterByDishwasher(filterByParking(filterByWasher(filterByElevator(filterByConditioner(ads))))))))));
+    var filteredAds = filterByConditioner(ads);
+    filteredAds = filterByElevator(filteredAds);
+    filteredAds = filterByWasher(filteredAds);
+    filteredAds = filterByParking(filteredAds);
+    filteredAds = filterByDishwasher(filteredAds);
+    filteredAds = filterByWifi(filteredAds);
+    filteredAds = filterByGuests(filteredAds);
+    filteredAds = filterByRooms(filteredAds);
+    filteredAds = filterByPrice(filteredAds);
+    filteredAds = filterByType(filteredAds);
+    return filteredAds;
   };
 
-  var onTypeFilterChange = window.utils.debounce(function (ads) {
-    clearPinsContainer();
-    fillPinsContainer(filterByAll(ads));
-  });
-
-  var onPriceFilterChange = window.utils.debounce(function (ads) {
-    clearPinsContainer();
-    fillPinsContainer(filterByAll(ads));
-  });
-
-  var onRoomsFilterChange = window.utils.debounce(function (ads) {
-    clearPinsContainer();
-    fillPinsContainer(filterByAll(ads));
-  });
-
-  var onGuestsFilterChange = window.utils.debounce(function (ads) {
-    clearPinsContainer();
-    fillPinsContainer(filterByAll(ads));
-  });
-
-  var onWifiFilterChange = window.utils.debounce(function (ads) {
-    clearPinsContainer();
-    fillPinsContainer(filterByAll(ads));
-  });
-
-  var onDishwasherFilterChange = window.utils.debounce(function (ads) {
-    clearPinsContainer();
-    fillPinsContainer(filterByAll(ads));
-  });
-
-  var onParkingFilterChange = window.utils.debounce(function (ads) {
-    clearPinsContainer();
-    fillPinsContainer(filterByAll(ads));
-  });
-
-  var onWasherFilterChange = window.utils.debounce(function (ads) {
-    clearPinsContainer();
-    fillPinsContainer(filterByAll(ads));
-  });
-
-  var onElevatorFilterChange = window.utils.debounce(function (ads) {
-    clearPinsContainer();
-    fillPinsContainer(filterByAll(ads));
-  });
-
-  var onConditionerFilterChange = window.utils.debounce(function (ads) {
+  var onFiltersChange = window.utils.debounce(function (ads) {
     clearPinsContainer();
     fillPinsContainer(filterByAll(ads));
   });
 
   var enableFilters = function (ads) {
-    typeFilter.addEventListener('change', function () {
-      onTypeFilterChange(ads);
+    filters.forEach(function (element) {
+      element.addEventListener('change', function () {
+        onFiltersChange(ads);
+      });
     });
-    priceFilter.addEventListener('change', function () {
-      onPriceFilterChange(ads);
-    });
-    roomsFilter.addEventListener('change', function () {
-      onRoomsFilterChange(ads);
-    });
-    guestsFilter.addEventListener('change', function () {
-      onGuestsFilterChange(ads);
-    });
-    wifiFilter.addEventListener('change', function () {
-      onWifiFilterChange(ads);
-    });
-    dishwasherFilter.addEventListener('change', function () {
-      onDishwasherFilterChange(ads);
-    });
-    parkingFilter.addEventListener('change', function () {
-      onParkingFilterChange(ads);
-    });
-    washerFilter.addEventListener('change', function () {
-      onWasherFilterChange(ads);
-    });
-    elevatorFilter.addEventListener('change', function () {
-      onElevatorFilterChange(ads);
-    });
-    conditionerFilter.addEventListener('change', function () {
-      onConditionerFilterChange(ads);
+
+    checkboxes.forEach(function (element) {
+      element.addEventListener('change', function () {
+        onFiltersChange(ads);
+      });
     });
   };
 
