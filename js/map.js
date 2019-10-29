@@ -4,9 +4,7 @@
 
   var map = document.querySelector('.map');
   var filtersContainer = map.querySelector('.map__filters-container');
-  var features = filtersContainer.querySelector('.map__features');
   var filters = filtersContainer.querySelectorAll('.map__filter');
-  var typeFilter = filtersContainer.querySelector('#housing-type');
   var pinsContainer = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var loadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
@@ -99,21 +97,14 @@
     pinsContainer.appendChild(window.pins.renderFragment(ads.slice(0, window.constants.MAX_PINS), map, filtersContainer));
   };
 
-  var filterByType = function (ads) {
-    return typeFilter.value === 'any' ? ads : ads.filter(function (ad) {
-      return typeFilter.value === ad.offer.type;
-    });
-  };
-
-
-  var onTypeFilterChange = function (ads) {
+  var onFiltersChange = window.utils.debounce(function (ads) {
     clearPinsContainer();
-    fillPinsContainer(filterByType(ads));
-  };
+    fillPinsContainer(window.filter.filterByAll(ads, filtersContainer));
+  });
 
   var enableFilters = function (ads) {
-    typeFilter.addEventListener('change', function () {
-      onTypeFilterChange(ads);
+    filtersContainer.addEventListener('change', function () {
+      onFiltersChange(ads);
     });
   };
 
@@ -136,7 +127,6 @@
     window.form.disable();
     window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
     window.utils.setElemsDisabled(filters, false);
-    features.disabled = false;
   };
 
   initMap();
