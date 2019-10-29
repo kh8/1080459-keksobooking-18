@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+  var filtersContainer = document.querySelector('.map__filters-container');
+  var typeFilter = filtersContainer.querySelector('#housing-type');
+  var priceFilter = filtersContainer.querySelector('#housing-price');
+  var roomsFilter = filtersContainer.querySelector('#housing-rooms');
+  var guestsFilter = filtersContainer.querySelector('#housing-guests');
+  var featuresContainer = filtersContainer.querySelector('.map__features');
+  var features = featuresContainer.querySelectorAll('.map__checkbox');
 
   var filterByType = function (ads, filter) {
     return filter.value === 'any' ? ads : ads.filter(function (ad) {
@@ -49,13 +56,7 @@
     return filteredAds;
   };
 
-  var filterByAll = function (ads, filtersContainer) {
-    var typeFilter = filtersContainer.querySelector('#housing-type');
-    var priceFilter = filtersContainer.querySelector('#housing-price');
-    var roomsFilter = filtersContainer.querySelector('#housing-rooms');
-    var guestsFilter = filtersContainer.querySelector('#housing-guests');
-    var featuresContainer = filtersContainer.querySelector('.map__features');
-    var features = featuresContainer.querySelectorAll('.map__checkbox');
+  var filterByAll = function (ads) {
     var filteredAds = filterByGuests(ads, guestsFilter);
     filteredAds = filterByRooms(filteredAds, roomsFilter);
     filteredAds = filterByPrice(filteredAds, priceFilter);
