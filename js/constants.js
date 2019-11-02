@@ -56,6 +56,8 @@
 
   var DEBOUNCE_INTERVAL = 300;
 
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   window.constants = {
     keycodes: keycodes,
     mainPinParams: mainPinParams,
@@ -66,7 +68,8 @@
     formExtremums: formExtremums,
     filterOptions: filterOptions,
     serverParams: serverParams,
-    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL
+    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL,
+    FILE_TYPES: FILE_TYPES
   };
 
 })();

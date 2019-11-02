@@ -15,6 +15,10 @@
   var submitBtn = form.querySelector('.ad-form__submit');
   var successTemplate = document.querySelector('#success ').content.querySelector('.success');
   var uploadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var avatarChooser = form.querySelector('.ad-form__field input[type=file]');
+  var avatarPreview = form.querySelector('.ad-form-header__preview img');
+  var adFotoChooser = form.querySelector('.ad-form__upload input[type=file]');
+  var adFotosContainer = form.querySelector('.ad-form__photo');
 
   var minTitleLength = window.constants.formExtremums.MIN_TITLE_LENGTH;
   var maxTitleLength = window.constants.formExtremums.MAX_TITLE_LENGTH;
@@ -86,6 +90,24 @@
     address.value = Math.floor(pinX + window.constants.mainPinParams.WIDTH / 2) + ', ' + Math.floor(pinY + window.constants.mainPinParams.HEIGHT);
   };
 
+  var fileChoose = function (img, fileChooser) {
+    var file = fileChooser.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = window.constants.FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+      reader.addEventListener('load', function () {
+        img.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+
   var disableForm = function () {
     form.classList.add('ad-form--disabled');
     title.removeEventListener('keydown', onTitleKeydown);
@@ -140,6 +162,16 @@
     price.addEventListener('keydown', onPriceKeydown);
     checkIn.addEventListener('change', onCheckInChange);
     checkOut.addEventListener('change', onCheckOutChange);
+    avatarChooser.addEventListener('change', function () {
+      fileChoose(avatarPreview, avatarChooser);
+    });
+    var photo = document.createElement('img');
+    photo.style.width = '100%';
+    photo.style.height = 'auto';
+    adFotosContainer.appendChild(photo);
+    adFotoChooser.addEventListener('change', function () {
+      fileChoose(photo, adFotoChooser);
+    });
     form.addEventListener('submit', function (evt) {
       evt.preventDefault();
       if (validateForm()) {
