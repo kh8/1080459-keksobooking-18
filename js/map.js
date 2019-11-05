@@ -40,10 +40,10 @@
         offset.x = moveEvt.clientX - dragoffset.x;
       }
 
-      if (moveEvt.clientY - dragoffset.y < 0) {
-        offset.y = 0;
-      } else if (moveEvt.clientY - dragoffset.y + window.constants.mainPinParams.HEIGHT > map.clientHeight) {
-        offset.y = map.clientHeight - window.constants.mainPinParams.HEIGHT;
+      if (moveEvt.clientY - dragoffset.y < window.constants.mainPinParams.MIN_Y) {
+        offset.y = window.constants.mainPinParams.MIN_Y;
+      } else if (moveEvt.clientY - dragoffset.y + window.constants.mainPinParams.HEIGHT > window.constants.mainPinParams.MAX_Y) {
+        offset.y = window.constants.mainPinParams.MAX_Y - window.constants.mainPinParams.HEIGHT;
       } else {
         offset.y = moveEvt.clientY - dragoffset.y;
       }
@@ -94,7 +94,7 @@
   };
 
   var fillPinsContainer = function (ads) {
-    pinsContainer.appendChild(window.pins.renderFragment(ads.slice(0, window.constants.MAX_PINS), map, filtersContainer));
+    pinsContainer.appendChild(window.pins.renderFragment(ads.slice(0, window.constants.MAX_PINS), map));
   };
 
   var onFiltersChange = window.utils.debounce(function (ads) {
@@ -124,6 +124,7 @@
     map.classList.add('map--faded');
     clearPinsContainer();
     initMainPin();
+    window.card.remove();
     window.form.disable();
     window.form.fillAddress(mainPin.offsetLeft, mainPin.offsetTop);
     window.utils.setElemsDisabled(filters, false);

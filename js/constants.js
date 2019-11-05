@@ -6,7 +6,9 @@
     WIDTH: 65,
     HEIGHT: 87,
     START_X: 570,
-    START_Y: 385
+    START_Y: 385,
+    MIN_Y: 130,
+    MAX_Y: 630
   };
 
   var pinParams = {

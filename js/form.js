@@ -15,6 +15,7 @@
   var checkOut = form.querySelector('#timeout');
   var features = form.querySelectorAll('.feature__checkbox');
   var submitBtn = form.querySelector('.ad-form__submit');
+  var resetBtn = form.querySelector('.ad-form__reset');
   var successTemplate = document.querySelector('#success ').content.querySelector('.success');
   var uploadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
   var avatarChooser = form.querySelector('.ad-form__field input[type=file]');
@@ -86,6 +87,11 @@
 
   var onCheckOutChange = function (evt) {
     checkIn.value = evt.currentTarget.value;
+  };
+
+  var onResetBtnClick = function () {
+    window.map.init();
+    resetBtn.removeEventListener('click', onResetBtnClick);
   };
 
   var fillAddress = function (pinX, pinY) {
@@ -208,6 +214,7 @@
       adFotosContainer.appendChild(foto);
       fileChoose(fotoImg, adFotoChooser);
     });
+
     submitBtn.addEventListener('click', function () {
       validateForm();
     });
@@ -221,6 +228,7 @@
       }
     });
 
+    resetBtn.addEventListener('click', onResetBtnClick);
     window.utils.setElemsDisabled(fieldsets, false);
   };
 
