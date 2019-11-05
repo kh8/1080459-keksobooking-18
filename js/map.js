@@ -99,6 +99,7 @@
 
   var onFiltersChange = window.utils.debounce(function (ads) {
     clearPinsContainer();
+    window.card.remove();
     fillPinsContainer(window.filter.filterByAll(ads, filtersContainer));
   });
 
