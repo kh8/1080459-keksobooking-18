@@ -116,7 +116,7 @@
 
   var enableMap = function () {
     map.classList.remove('map--faded');
-    window.form.enable(map);
+    window.form.enable();
     window.server.loadAds(window.constants.serverParams.LOAD_URL, onLoadSuccess, onLoadError);
   };
 

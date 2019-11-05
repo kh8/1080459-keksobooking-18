@@ -19,13 +19,15 @@
     return fragment;
   };
 
-  var onCardCloseBtnClick = function (card, container) {
-    container.removeChild(card);
+  var onCardCloseBtnClick = function (evt) {
+    evt.target.parentNode.parentNode.removeChild(evt.target.parentNode);
   };
 
-  var onCardCloseEscPress = function (evt, card, container) {
+  var onCardCloseEscPress = function (evt) {
     if (evt.keyCode === window.constants.keycodes.ESC_KEYCODE) {
-      container.removeChild(card);
+      var card = document.querySelector('.map__card');
+      card.parentNode.removeChild(card);
+      document.removeEventListener('keydown', onCardCloseEscPress);
     }
   };
 
@@ -54,12 +56,8 @@
     }
 
     var cardCloseBtn = card.querySelector('.popup__close');
-    cardCloseBtn.addEventListener('click', function () {
-      onCardCloseBtnClick(card, container);
-    });
-    document.addEventListener('keydown', function (evt) {
-      onCardCloseEscPress(evt, card, container);
-    }, true);
+    cardCloseBtn.addEventListener('click', onCardCloseBtnClick);
+    document.addEventListener('keydown', onCardCloseEscPress);
   };
 
   window.card = {

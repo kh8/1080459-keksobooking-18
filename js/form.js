@@ -2,6 +2,7 @@
 
 (function () {
 
+  var submitMessageContainer = document.querySelector('main');
   var form = document.querySelector('.ad-form');
   var title = form.querySelector('#title');
   var address = form.querySelector('#address');
@@ -12,6 +13,7 @@
   var type = form.querySelector('#type');
   var checkIn = form.querySelector('#timein');
   var checkOut = form.querySelector('#timeout');
+  var features = form.querySelectorAll('.feature__checkbox');
   var submitBtn = form.querySelector('.ad-form__submit');
   var successTemplate = document.querySelector('#success ').content.querySelector('.success');
   var uploadErrorTemplate = document.querySelector('#error').content.querySelector('.error');
@@ -119,41 +121,67 @@
     window.utils.setElemsDisabled(fieldsets, true);
     title.value = '';
     price.value = '';
+    type.selectedIndex = 1;
+    rooms.selectedIndex = 0;
+    capacity.selectedIndex = 2;
+    checkIn.selectedIndex = 0;
+    checkOut.selectedIndex = 0;
+    features.forEach(function (element) {
+      element.checked = false;
+    });
   };
 
-  var enableForm = function (successSubmitContainer) {
+  var enableForm = function () {
 
     var onUploadSuccess = function () {
       var success = successTemplate.cloneNode(true);
 
       var onSuccessMessageClick = function () {
-        successSubmitContainer.removeChild(success);
+        submitMessageContainer.removeChild(success);
         document.removeEventListener('click', onSuccessMessageClick);
+        document.removeEventListener('keydown', onSuccessMessageEsc);
       };
 
       var onSuccessMessageEsc = function (evt) {
         if (evt.keyCode === window.constants.keycodes.ESC_KEYCODE) {
-          successSubmitContainer.removeChild(success);
-          document.removeEventListener('click', onSuccessMessageEsc);
+          submitMessageContainer.removeChild(success);
+          document.removeEventListener('click', onSuccessMessageClick);
+          document.removeEventListener('keydown', onSuccessMessageEsc);
         }
       };
 
-      successSubmitContainer.appendChild(success);
+      submitMessageContainer.appendChild(success);
       document.addEventListener('click', onSuccessMessageClick);
-      document.addEventListener('click', onSuccessMessageEsc);
+      document.addEventListener('keydown', onSuccessMessageEsc);
     };
 
     var onUploadError = function (message) {
       var error = uploadErrorTemplate.cloneNode(true);
       var errorMessage = error.querySelector('.error__message');
       var errorButton = error.querySelector('.error__button');
-      errorButton.addEventListener('click', function (evt) {
-        evt.preventDefault();
-        error.removeChild(error);
+
+      var onErrorMessageClick = function () {
+        submitMessageContainer.removeChild(error);
+        document.removeEventListener('click', onErrorMessageClick);
+        document.removeEventListener('keydown', onErrorMessageEsc);
+      };
+
+      var onErrorMessageEsc = function (evt) {
+        if (evt.keyCode === window.constants.keycodes.ESC_KEYCODE) {
+          submitMessageContainer.removeChild(error);
+          document.removeEventListener('click', onErrorMessageClick);
+          document.removeEventListener('keydown', onErrorMessageEsc);
+        }
+      };
+
+      errorButton.addEventListener('click', function () {
         window.server.uploadAd(window.constants.serverParams.UPLOAD_URL, new FormData(form), onUploadSuccess, onUploadError);
       });
+
       errorMessage.textContent = message;
-      successSubmitContainer.appendChild(error);
+      submitMessageContainer.appendChild(error);
+      document.addEventListener('click', onErrorMessageClick);
+      document.addEventListener('keydown', onErrorMessageEsc);
     };
 
     form.classList.remove('ad-form--disabled');
@@ -172,13 +200,19 @@
     adFotoChooser.addEventListener('change', function () {
       fileChoose(photo, adFotoChooser);
     });
+    submitBtn.addEventListener('click', function () {
+      validateForm();
+    });
+
     form.addEventListener('submit', function (evt) {
       evt.preventDefault();
       if (validateForm()) {
         window.server.uploadAd(window.constants.serverParams.UPLOAD_URL, new FormData(form), onUploadSuccess, onUploadError);
         window.map.init();
+        validateForm();
       }
     });
+
     window.utils.setElemsDisabled(fieldsets, false);
   };
 
