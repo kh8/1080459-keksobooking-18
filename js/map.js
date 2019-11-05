@@ -69,7 +69,7 @@
     var errorButton = error.querySelector('.error__button');
     errorButton.addEventListener('click', function (evt) {
       evt.preventDefault();
-      error.removeChild(error);
+      error.remove();
       window.server.loadAds(window.constants.serverParams.LOAD_URL, onLoadSuccess, onLoadError);
     });
     errorMessage.textContent = message;

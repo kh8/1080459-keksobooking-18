@@ -4,6 +4,7 @@
 
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var photoTemplate = cardTemplate.querySelector('.popup__photo');
+  var lastCard = cardTemplate.cloneNode(true);
 
   var makePhoto = function (photoSrc) {
     var photo = photoTemplate.cloneNode(true);
@@ -19,14 +20,13 @@
     return fragment;
   };
 
-  var onCardCloseBtnClick = function (evt) {
-    evt.target.parentNode.parentNode.removeChild(evt.target.parentNode);
+  var onCardCloseBtnClick = function () {
+    lastCard.remove();
   };
 
   var onCardCloseEscPress = function (evt) {
     if (evt.keyCode === window.constants.keycodes.ESC_KEYCODE) {
-      var card = document.querySelector('.map__card');
-      card.parentNode.removeChild(card);
+      lastCard.remove();
       document.removeEventListener('keydown', onCardCloseEscPress);
     }
   };
@@ -44,11 +44,12 @@
     card.querySelector('.popup__avatar').src = ad.author.avatar;
     card.querySelector('.popup__photos').innerHTML = '';
     card.querySelector('.popup__photos').appendChild(makePhotosFragment(ad.offer.photos));
+    lastCard = card;
     return card;
   };
 
   var insertCard = function (card, container, beforeElement) {
-    var lastCard = container.querySelector('.map__card');
+    lastCard = container.querySelector('.map__card');
     if (lastCard) {
       container.replaceChild(card, lastCard);
     } else {

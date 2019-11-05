@@ -137,14 +137,14 @@
       var success = successTemplate.cloneNode(true);
 
       var onSuccessMessageClick = function () {
-        submitMessageContainer.removeChild(success);
+        success.remove();
         document.removeEventListener('click', onSuccessMessageClick);
         document.removeEventListener('keydown', onSuccessMessageEsc);
       };
 
       var onSuccessMessageEsc = function (evt) {
         if (evt.keyCode === window.constants.keycodes.ESC_KEYCODE) {
-          submitMessageContainer.removeChild(success);
+          success.remove();
           document.removeEventListener('click', onSuccessMessageClick);
           document.removeEventListener('keydown', onSuccessMessageEsc);
         }
@@ -161,14 +161,14 @@
       var errorButton = error.querySelector('.error__button');
 
       var onErrorMessageClick = function () {
-        submitMessageContainer.removeChild(error);
+        error.remove();
         document.removeEventListener('click', onErrorMessageClick);
         document.removeEventListener('keydown', onErrorMessageEsc);
       };
 
       var onErrorMessageEsc = function (evt) {
         if (evt.keyCode === window.constants.keycodes.ESC_KEYCODE) {
-          submitMessageContainer.removeChild(error);
+          error.remove();
           document.removeEventListener('click', onErrorMessageClick);
           document.removeEventListener('keydown', onErrorMessageEsc);
         }
