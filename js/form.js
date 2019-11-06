@@ -13,7 +13,6 @@
   var type = form.querySelector('#type');
   var checkIn = form.querySelector('#timein');
   var checkOut = form.querySelector('#timeout');
-  var features = form.querySelectorAll('.feature__checkbox');
   var submitBtn = form.querySelector('.ad-form__submit');
   var resetBtn = form.querySelector('.ad-form__reset');
   var successTemplate = document.querySelector('#success ').content.querySelector('.success');
@@ -125,16 +124,7 @@
     checkOut.removeEventListener('change', onCheckOutChange);
     submitBtn.removeEventListener('click', validateForm);
     window.utils.setElemsDisabled(fieldsets, true);
-    title.value = '';
-    price.value = '';
-    type.selectedIndex = 1;
-    rooms.selectedIndex = 0;
-    capacity.selectedIndex = 2;
-    checkIn.selectedIndex = 0;
-    checkOut.selectedIndex = 0;
-    features.forEach(function (element) {
-      element.checked = false;
-    });
+    form.reset();
     var fotos = adFotosContainer.querySelectorAll('.ad-form__photo');
     fotos.forEach(function (element) {
       element.remove();
