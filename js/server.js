@@ -1,6 +1,15 @@
 'use strict';
 
 (function () {
+  var addErrorListeners = function (obj, errorFunc) {
+    obj.addEventListener('error', function () {
+      errorFunc('Произошла ошибка соединения');
+    });
+    obj.addEventListener('timeout', function () {
+      errorFunc('Запрос не успел выполниться за ' + obj.timeout + 'мс');
+    });
+  };
+
   var loadAds = function (url, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -14,14 +23,7 @@
       }
     });
 
-    xhr.addEventListener('error', function () {
-      onError('Произошла ошибка загрузки объявления');
-    });
-
-    xhr.addEventListener('timeout', function () {
-      onError('Загрузка не успела выполниться за ' + xhr.timeout + 'мс');
-    });
-
+    addErrorListeners(xhr, onError);
     xhr.open('GET', url);
     xhr.send();
   };
@@ -35,14 +37,7 @@
       onSuccess(xhr.response);
     });
 
-    xhr.addEventListener('error', function () {
-      onError('Произошла ошибка отправки объявления');
-    });
-
-    xhr.addEventListener('timeout', function () {
-      onError('Отправка не успела выполниться за ' + xhr.timeout + 'мс');
-    });
-
+    addErrorListeners(xhr, onError);
     xhr.open('POST', url);
     xhr.send(data);
   };
