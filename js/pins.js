@@ -5,12 +5,12 @@
   var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
   var onPinClick = function (ad, container, beforeContainer) {
-    window.card.insert(window.card.make(ad), container, beforeContainer);
+    window.card.render(ad, container, beforeContainer);
   };
 
   var onPinKeydown = function (evt, ad, container, beforeContainer) {
     if (evt.keyCode === window.constants.keycodes.ENTER_KEYCODE) {
-      window.card.insert(window.card.make(ad), container, beforeContainer);
+      window.card.render(ad, container, beforeContainer);
     }
   };
 

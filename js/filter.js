@@ -9,15 +9,15 @@
   var featuresContainer = filtersContainer.querySelector('.map__features');
   var features = featuresContainer.querySelectorAll('.map__checkbox');
 
-  var filterByType = function (ads, filter) {
-    return filter.value === 'any' ? ads : ads.filter(function (ad) {
-      return filter.value === ad.offer.type;
+  var filterByType = function (ads) {
+    return typeFilter.value === 'any' ? ads : ads.filter(function (ad) {
+      return typeFilter.value === ad.offer.type;
     });
   };
 
-  var filterByPrice = function (ads, filter) {
-    return filter.value === 'any' ? ads : ads.filter(function (ad) {
-      switch (filter.value) {
+  var filterByPrice = function (ads) {
+    return priceFilter.value === 'any' ? ads : ads.filter(function (ad) {
+      switch (priceFilter.value) {
         case 'low':
           return ad.offer.price < window.constants.filterOptions.LOW_PRICE;
         case 'high':
@@ -30,15 +30,15 @@
     });
   };
 
-  var filterByRooms = function (ads, filter) {
-    return filter.value === 'any' ? ads : ads.filter(function (ad) {
-      return filter.value === ad.offer.rooms + '';
+  var filterByRooms = function (ads) {
+    return roomsFilter.value === 'any' ? ads : ads.filter(function (ad) {
+      return roomsFilter.value === ad.offer.rooms + '';
     });
   };
 
-  var filterByGuests = function (ads, filter) {
-    return filter.value === 'any' ? ads : ads.filter(function (ad) {
-      return filter.value === ad.offer.guests + '';
+  var filterByGuests = function (ads) {
+    return guestsFilter.value === 'any' ? ads : ads.filter(function (ad) {
+      return guestsFilter.value === ad.offer.guests + '';
     });
   };
 
@@ -48,9 +48,9 @@
     });
   };
 
-  var filterByFeatures = function (ads, checkboxes) {
+  var filterByFeatures = function (ads) {
     var filteredAds = ads;
-    checkboxes.forEach(function (element) {
+    features.forEach(function (element) {
       filteredAds = filterByFeature(filteredAds, element);
     });
     return filteredAds;
@@ -58,10 +58,10 @@
 
   var filterByAll = function (ads) {
     var filteredAds = filterByGuests(ads, guestsFilter);
-    filteredAds = filterByRooms(filteredAds, roomsFilter);
-    filteredAds = filterByPrice(filteredAds, priceFilter);
-    filteredAds = filterByType(filteredAds, typeFilter);
-    filteredAds = filterByFeatures(filteredAds, features);
+    filteredAds = filterByRooms(filteredAds);
+    filteredAds = filterByPrice(filteredAds);
+    filteredAds = filterByType(filteredAds);
+    filteredAds = filterByFeatures(filteredAds);
     return filteredAds;
   };
 

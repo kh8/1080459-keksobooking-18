@@ -6,7 +6,9 @@
     WIDTH: 65,
     HEIGHT: 87,
     START_X: 570,
-    START_Y: 385
+    START_Y: 385,
+    MIN_Y: 130,
+    MAX_Y: 630
   };
 
   var pinParams = {
@@ -56,6 +58,8 @@
 
   var DEBOUNCE_INTERVAL = 300;
 
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   window.constants = {
     keycodes: keycodes,
     mainPinParams: mainPinParams,
@@ -66,7 +70,8 @@
     formExtremums: formExtremums,
     filterOptions: filterOptions,
     serverParams: serverParams,
-    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL
+    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL,
+    FILE_TYPES: FILE_TYPES
   };
 
 })();
