@@ -15,11 +15,11 @@
     });
 
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      onError('Произошла ошибка загрузки объявления');
     });
 
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      onError('Загрузка не успела выполниться за ' + xhr.timeout + 'мс');
     });
 
     xhr.open('GET', url);
@@ -36,11 +36,11 @@
     });
 
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      onError('Произошла ошибка отправки объявления');
     });
 
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      onError('Отправка не успела выполниться за ' + xhr.timeout + 'мс');
     });
 
     xhr.open('POST', url);

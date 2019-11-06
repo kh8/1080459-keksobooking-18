@@ -40,8 +40,8 @@
         offset.x = moveEvt.clientX - dragoffset.x;
       }
 
-      if (moveEvt.clientY - dragoffset.y < window.constants.mainPinParams.MIN_Y) {
-        offset.y = window.constants.mainPinParams.MIN_Y;
+      if (moveEvt.clientY - dragoffset.y < window.constants.mainPinParams.MIN_Y - window.constants.mainPinParams.HEIGHT) {
+        offset.y = window.constants.mainPinParams.MIN_Y - window.constants.mainPinParams.HEIGHT;
       } else if (moveEvt.clientY - dragoffset.y + window.constants.mainPinParams.HEIGHT > window.constants.mainPinParams.MAX_Y) {
         offset.y = window.constants.mainPinParams.MAX_Y - window.constants.mainPinParams.HEIGHT;
       } else {
